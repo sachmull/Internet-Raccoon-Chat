@@ -30,22 +30,17 @@ void	Server::PollEventHandler()
 		{
 			--poll_events_ready;
 			if (poll_fds_[idx].revents & POLLIN) // there is data to read
-				conns_.at(poll_fds_[idx].fd).Recv();
+				irc_.Recv(poll_fds_[idx].fd);
 			if (poll_fds_[idx].revents & POLLOUT)
-				conns_.at(poll_fds_[idx].fd).Send();
+				irc_.Send(poll_fds_[idx].fd);
 			if (poll_fds_[idx].revents & POLLERR)
-				conns_.at(poll_fds_[idx].fd).Error();
+				irc_.Error(poll_fds_[idx].fd);
 			if (poll_fds_[idx].revents & POLLHUP)
-				conns_.at(poll_fds_[idx].fd).ClosedClient(); // recv should call close if pipe empty
+				irc_.ClosedClient(poll_fds_[idx].fd); // recv should call close if pipe empty
 			if (poll_fds_[idx].revents & POLLNVAL)
 				; // fd not open
 		}
 		} catch (std::exception& e) { std::cerr << "exception caught: " << e.what() << '\n'; }
 	}
-}
-
-void	Server::DeleteCollector(User* conn_identifier)
-{
-	conns_to_delete_.push_back(conn_identifier);
 }
 

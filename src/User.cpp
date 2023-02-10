@@ -33,4 +33,4 @@ void	User::Error()
 {
 }
 
-void	User::CloseConnection() { Server::DeleteCollector(this); }
+void	User::CloseConnection() { Irc::DeleteCollector(this); }

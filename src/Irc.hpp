@@ -13,6 +13,7 @@
 #include <poll.h>
 
 #include "Server.hpp"
+#include "Channel.hpp"
 
 
 // #include "./Demultiplexer.hpp"
@@ -24,17 +25,25 @@
 class Irc
 {
 	private:
-		std::map<std::string, Channel>		conns_;
-		Server*								server_handle_;
+		static std::map<std::string, Channel>		channels_;
+		static std::map<int, User>					conns_;
+		static std::vector<User*>					conns_to_delete_;
+
+
 
 	public:
-		Irc(Server* server_handle);
+		Irc();
 		~Irc();
 
+		static void	Recv(int fd);
+		static void	Send(int fd);
+		static void	Error(int fd);
+		static void	ClosedClient(int fd);
 
-		void	CreateServers(); // call config file parser and create servers
-		void	PollEventHandler();
-	
+		void	DeleteCollector(User* conn_identifier);
+		void	EventDistributor();
+
+
 	private:
 };
 

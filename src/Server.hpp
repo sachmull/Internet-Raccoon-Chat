@@ -30,19 +30,16 @@ class Server
 	};
 
 	private:
-		static std::map<int, User>			conns_;
-		static std::vector<User*>			conns_to_delete_;
 		static std::vector<pollfd>			poll_fds_;
-		static Irc							irc_handle_;
+		static Irc							irc_;
 		static s_server_fd					server_fd_;
 
 	public:
 		Server();
 		~Server();
 
-		static void	CreateServers(); // call config file parser and create servers
+		// static void InitServer();
 		static void	PollEventHandler();
-		static void	DeleteCollector(User* conn_identifier);
 	
 	private:
 };

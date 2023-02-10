@@ -1,9 +1,34 @@
 #include "./Irc.hpp"
-Irc::Irc(Server* server_handle) : server_handle_(server_handle)
+Irc::Irc()
 {
 }
 
 Irc::~Irc()
 {
 	
+}
+
+void	Irc::Recv(int fd)
+{
+	conns_.at(fd).Recv();
+}
+
+void	Irc::Send(int fd)
+{
+	conns_.at(fd).Send();
+}
+
+void	Irc::Error(int fd)
+{
+	conns_.at(fd).Error();
+}
+
+void	Irc::ClosedClient(int fd)
+{
+	conns_.at(fd).ClosedClient();
+}
+
+void	Irc::DeleteCollector(User* conn_identifier)
+{
+	conns_to_delete_.push_back(conn_identifier);
 }

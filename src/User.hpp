@@ -36,4 +36,5 @@ class User
 	private:
 		void	CloseConnection(); // closes connection and adds it to delete collector of multiplexer
 };
+
 bool operator==(const User& lhs, const User& rhs);
