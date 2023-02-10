@@ -49,26 +49,30 @@ void	Server::PollEventHandler()
 	if (poll_events_ready == -1)
 		; //error here or in demultiplexer?
 	// evaluate the returned events
-	std::cout << "pollevents ready: " << poll_events_ready << std::cout;
+	if (poll_events_ready > 0)
+	{
+		// std::cout << "pollevents ready: " << poll_events_ready << std::endl;
+		
+		// std::cout << "poll fd size: " << poll_fds_.size() << std::endl;
+	}
+		
 	for (size_t idx = 0; idx < poll_fds_.size() && poll_events_ready; ++idx)
 	{
 		try{
-		if (poll_fds_[idx].fd == socket_.fd)
+		if (poll_fds_[idx].fd == socket_.fd && poll_fds_[idx].revents != 0)
 		{
+			--poll_events_ready;
 			if (poll_fds_[idx].revents & POLLIN) // there is data to read
 			{
 				Server::Accept();
-				std::cout << "accepted" << std::endl;
+				std::cout << "new client accepted" << std::endl;
 			}
 		}
 		else if (poll_fds_[idx].revents != 0)
 		{
 			--poll_events_ready;
 			if (poll_fds_[idx].revents & POLLIN) // there is data to read
-			{
 				irc_.Recv(poll_fds_[idx].fd);
-				std::cout <<"pollin" << std::endl;
-			}
 			if (poll_fds_[idx].revents & POLLOUT)
 				irc_.Send(poll_fds_[idx].fd);
 			if (poll_fds_[idx].revents & POLLERR)
