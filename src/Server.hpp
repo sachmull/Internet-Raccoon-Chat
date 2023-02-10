@@ -15,24 +15,18 @@
 
 #include "Irc.hpp"
 #include "User.hpp"
+#include "Socket.hpp"
 
-
-// #include "./Demultiplexer.hpp"
-
+#define POLLEVENTS (POLLIN|POLLOUT|POLLERR|POLLHUP|POLLNVAL)
 /**
  * Sever handling every connection
 **/
-
 class Server
 {
-	struct s_server_fd{
-		int fd;
-	};
-
 	private:
 		static std::vector<pollfd>			poll_fds_;
 		static Irc							irc_;
-		static s_server_fd					server_fd_;
+		static Socket						server_fd_;
 
 	public:
 		Server();
@@ -40,7 +34,9 @@ class Server
 
 		// static void InitServer();
 		static void	PollEventHandler();
+		static void ErasePollFd(pollfd* fd);
 	
 	private:
+		static void	ResetPollFdFlags();
 };
 

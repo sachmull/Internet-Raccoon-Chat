@@ -5,25 +5,23 @@
 #include <vector>
 #include <sys/socket.h>
 
-#include <Server.hpp>
-#include <Irc.hpp>
+#include "Server.hpp"
+#include "Irc.hpp"
+#include "Socket.hpp"
 
 /**
- * A Connection between 2 sockets
+ * User handling
 **/
 class User
 {
-	struct Socket{
-		int fd_;
-	};
 	private:
 		std::vector<char>	input_buff_;
 		std::vector<char>	output_buff_;
 		bool				client_closed_;
-		Socket				socket_;
+		pollfd*				socket_;
 
 	public:
-		User(int fd);
+		User(pollfd* poll_fd);
 		~User();
 
 		bool	Recv(); // gets message from client -> reads in input buff

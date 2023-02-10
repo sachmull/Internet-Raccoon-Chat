@@ -1,17 +1,23 @@
 #include "./User.hpp"
 
-User::User(int fd) : client_closed_(false)
+User::User(pollfd* poll_fd) : client_closed_(false)
 {
-	socket_.fd_ = fd;
+	socket_ = poll_fd;
 	input_buff_.reserve(512);
 }
+
+User::~User()
+{
+	Server::ErasePollFd(socket_);
+}
+
 
 bool	User::Recv()
 {
 	std::string	received;
 	ssize_t		c_received;
 
-	c_received = recv(socket_.fd_, input_buff_.data() + input_buff_.size(), input_buff_.capacity() - input_buff_.size(), NULL);
+	c_received = recv(socket_->fd, input_buff_.data() + input_buff_.size(), input_buff_.capacity() - input_buff_.size(), NULL);
 	if (c_received == -1)
 		input_buff_.clear();
 	if (c_received == 0 && client_closed_)

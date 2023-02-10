@@ -14,6 +14,7 @@ void	Channel::RegisterUser(User* user)
 {
 	registered_users_.push_back(user);
 }
+
 void	Channel::DeregisterUser(User* user)
 {
 	std::vector<User*>::iterator it = registered_users_.begin();
