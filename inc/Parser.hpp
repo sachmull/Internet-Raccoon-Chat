@@ -18,7 +18,7 @@ typedef struct message_s {
 
 class Parser {
 	private:
-		std::string				input;
+		std::string	input;
 		std::size_t	pos;
 
 	public:

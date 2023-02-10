@@ -27,7 +27,6 @@ prefix_t	Parser::parse_prefix() {
 
 		substrs = split(input, ' ');
 		prefix_literal = substrs.first;
-		// input = substrs.second;	// uncomment this to cut the prefix from the input str, invalidates pos
 
 		substrs = split(prefix_literal, '@');
 		prefix_literal = substrs.first;
