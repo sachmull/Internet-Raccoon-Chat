@@ -32,6 +32,8 @@ class User
 		void	ClosedClient(); // sets client to closed and trys to receive data until 0
 		void	Error();
 
+		void	WriteOutputBuff(std::vector<char>& msg);
+
 
 	private:
 		void	CloseConnection(); // closes connection and adds it to delete collector of multiplexer

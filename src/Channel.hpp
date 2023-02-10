@@ -28,9 +28,9 @@ class Channel
 		Channel();
 		~Channel();
 
-		void	register_user(User* user);
-		void	deregister_user(User* user);
-		void	broadcast_msg(std::vector<char> msg);
+		void	RegisterUser(User* user);
+		void	DeregisterUser(User* user);
+		void	BroadcastMsg(std::vector<char> msg);
 
 	private:
 };

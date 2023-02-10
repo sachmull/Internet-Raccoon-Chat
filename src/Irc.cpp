@@ -32,3 +32,13 @@ void	Irc::DeleteCollector(User* conn_identifier)
 {
 	conns_to_delete_.push_back(conn_identifier);
 }
+
+bool CreateChannel(std::string name)
+{
+	return channels_.insert(std::pair(name, Channel()));
+}
+
+bool DeleteChannel(std::string name)
+{
+	return channels_.erase(name);
+}

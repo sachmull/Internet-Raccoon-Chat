@@ -34,3 +34,9 @@ void	User::Error()
 }
 
 void	User::CloseConnection() { Irc::DeleteCollector(this); }
+
+
+void	User::WriteOutputBuff(std::vector<char>& msg)
+{
+	output_buff_.insert(output_buff_.end(), msg.begin(), msg.end());
+}
