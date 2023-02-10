@@ -12,16 +12,12 @@
 #include <fcntl.h>
 #include <poll.h>
 
-#include "Server.hpp"
-#include "Channel.hpp"
-
-
-// #include "./Demultiplexer.hpp"
+#include <Channel.hpp>
+// #include <User.hpp>
 
 /**
  * IRC handling Channels
 **/
-
 class Irc
 {
 	private:

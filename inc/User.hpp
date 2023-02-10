@@ -5,8 +5,9 @@
 #include <vector>
 #include <sys/socket.h>
 
-#include "Server.hpp"
-#include "Irc.hpp"
+
+// class Server;
+// class Irc;
 
 /**
  * User handling
@@ -36,4 +37,4 @@ class User
 		void	CloseConnection(); // closes connection and adds it to delete collector of multiplexer
 };
 
-bool operator==(const User& lhs, const User& rhs);
+// bool operator==(const User& lhs, const User& rhs);

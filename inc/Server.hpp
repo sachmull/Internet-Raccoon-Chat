@@ -13,8 +13,7 @@
 #include <fcntl.h>
 #include <poll.h>
 
-#include "Irc.hpp"
-#include "User.hpp"
+#include <Irc.hpp>
 
 #define POLLEVENTS (POLLIN|POLLOUT|POLLERR|POLLHUP|POLLNVAL)
 /**
@@ -22,6 +21,7 @@
 **/
 class Server
 {
+	public:
 	struct Socket{
 		int					fd;
 		struct sockaddr_in	address;

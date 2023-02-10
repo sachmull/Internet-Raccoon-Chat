@@ -1,4 +1,9 @@
-#include "./Irc.hpp"
+#include <Irc.hpp>
+// #include <Server.hpp>
+
+std::map<std::string, Channel>		Irc::channels_;
+std::map<int, User>					Irc::conns_;
+std::vector<int>					Irc::conns_to_delete_;
 
 Irc::Irc()
 {

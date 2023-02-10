@@ -1,4 +1,5 @@
-#include "./User.hpp"
+#include <User.hpp>
+#include <Server.hpp>
 
 User::User(pollfd* poll_fd) : client_closed_(false)
 {
@@ -17,11 +18,12 @@ bool	User::Recv()
 	std::string	received;
 	ssize_t		c_received;
 
-	c_received = recv(socket_->fd, input_buff_.data() + input_buff_.size(), input_buff_.capacity() - input_buff_.size(), NULL);
+	c_received = recv(socket_->fd, input_buff_.data() + input_buff_.size(), input_buff_.capacity() - input_buff_.size(), 0);
 	if (c_received == -1)
 		input_buff_.clear();
 	if (c_received == 0 && client_closed_)
 		User::CloseConnection();
+	return (true);
 }
 
 void	User::Send()

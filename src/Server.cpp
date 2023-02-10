@@ -1,4 +1,7 @@
-#include "./Server.hpp"
+#include <Server.hpp>
+std::vector<pollfd>			Server::poll_fds_;
+Irc							Server::irc_;
+Server::Socket				Server::socket_;
 
 Server::Server(int port, int queue_length)
 {
@@ -23,7 +26,7 @@ Server::Server(int port, int queue_length)
 	socket_.address.sin_addr.s_addr = INADDR_ANY;
 
 	// bind the socket to our specified IP and port
-	error = bind(socket_.fd, (struct sockaddr*) &socket_.address, sizeof socket_.address);
+	error = bind(socket_.fd, (struct sockaddr*) &socket_.address, sizeof(socket_.address));
 	if (error == -1)
 		return ;
 	error = listen(socket_.fd, queue_length);
@@ -46,11 +49,14 @@ void	Server::PollEventHandler()
 	// evaluate the returned events
 	for (size_t idx = 0; idx < poll_fds_.size() && poll_events_ready; ++idx)
 	{
+		std::cout << "here" << std::endl;
 		if (poll_fds_[idx].fd == socket_.fd)
 		{
-			// if (poll_fds_[idx].revents & POLLIN) // there is data to read
-			// 	accept_client
-			;
+			if (poll_fds_[idx].revents & POLLIN) // there is data to read
+			{
+				Server::Accept();
+				std::cout << "accepted" << std::endl;
+			}
 		}
 		try{
 			if (poll_fds_[idx].revents != 0)
@@ -112,6 +118,7 @@ void	Server::Accept()
 
 void Server::AddConnection(struct pollfd poll_fd, struct sockaddr addr)
 {
+	(void)addr;
 	poll_fds_.push_back(poll_fd);
 	Irc::AddUser(&poll_fds_.back());
 }
