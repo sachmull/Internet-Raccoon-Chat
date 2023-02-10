@@ -15,7 +15,6 @@
 
 #include "Irc.hpp"
 #include "User.hpp"
-#include "Socket.hpp"
 
 #define POLLEVENTS (POLLIN|POLLOUT|POLLERR|POLLHUP|POLLNVAL)
 /**
@@ -23,20 +22,26 @@
 **/
 class Server
 {
+	struct Socket{
+		int					fd;
+		struct sockaddr_in	address;
+	};
 	private:
 		static std::vector<pollfd>			poll_fds_;
 		static Irc							irc_;
-		static Socket						server_fd_;
+		static Socket						socket_;
 
 	public:
-		Server();
+		Server(int port, int queue_length);
 		~Server();
 
 		// static void InitServer();
 		static void	PollEventHandler();
-		static void ErasePollFd(pollfd* fd);
+		static void ErasePollFd(pollfd* poll_fd);
 	
 	private:
 		static void	ResetPollFdFlags();
+		static void Accept();
+		static void AddConnection(struct pollfd poll_fd, struct sockaddr addr);
 };
 

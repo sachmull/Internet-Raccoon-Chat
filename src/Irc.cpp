@@ -1,4 +1,5 @@
 #include "./Irc.hpp"
+
 Irc::Irc()
 {
 }
@@ -28,22 +29,31 @@ void	Irc::ClosedClient(int fd)
 	conns_.at(fd).ClosedClient();
 }
 
-void	Irc::DeleteCollector(User* conn_identifier)
+void	Irc::DeleteCollector(int fd)
 {
-	conns_to_delete_.push_back(conn_identifier);
+	conns_to_delete_.push_back(fd);
 }
 
 void	Irc::EmptyDeleteCollector()
 {
-	
+	for(std::vector<int>::iterator it = conns_to_delete_.begin(); it != conns_to_delete_.end(); ++it)
+	{
+		conns_.erase(*it);
+	}
+	conns_to_delete_.clear();
 }
 
-bool CreateChannel(std::string name)
+void Irc::CreateChannel(std::string name)
 {
-	return channels_.insert(std::pair(name, Channel()));
+	channels_.insert(std::pair<std::string, Channel>(name, Channel()));
 }
 
-bool DeleteChannel(std::string name)
+bool Irc::DeleteChannel(std::string name)
 {
 	return channels_.erase(name);
+}
+
+void Irc::AddUser(pollfd* poll_fd)
+{
+	conns_.insert(std::pair<int, User>(poll_fd->fd, User(poll_fd)));
 }

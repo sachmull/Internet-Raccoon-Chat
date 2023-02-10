@@ -39,7 +39,7 @@ void	User::Error()
 {
 }
 
-void	User::CloseConnection() { Irc::DeleteCollector(this); }
+void	User::CloseConnection() { Irc::DeleteCollector(this->socket_->fd); }
 
 
 void	User::WriteOutputBuff(std::vector<char>& msg)

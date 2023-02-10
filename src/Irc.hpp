@@ -27,7 +27,7 @@ class Irc
 	private:
 		static std::map<std::string, Channel>		channels_;
 		static std::map<int, User>					conns_;
-		static std::vector<User*>					conns_to_delete_;
+		static std::vector<int>						conns_to_delete_;
 
 	public:
 		Irc();
@@ -38,11 +38,16 @@ class Irc
 		static void	Error(int fd);
 		static void	ClosedClient(int fd);
 
-		static void	DeleteCollector(User* conn_identifier);
+		static void	DeleteCollector(int fd);
+		static void EmptyDeleteCollector();
+
+
 		static void	EventDistributor();
 
 		static void CreateChannel(std::string name);
 		static bool DeleteChannel(std::string name);
+
+		static void AddUser(pollfd* poll_fd);
 	private:
 };
 

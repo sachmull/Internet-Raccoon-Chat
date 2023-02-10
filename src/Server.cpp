@@ -1,8 +1,34 @@
 #include "./Server.hpp"
 
-Server::Server()
+Server::Server(int port, int queue_length)
 {
+	int	error;
 
+	// create the server socket
+	socket_.fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (socket_.fd == -1)
+		return ;
+
+	// make the server socket unblocking
+	int status = fcntl(socket_.fd, F_GETFL, 0);
+	if (status == -1)
+		return ;
+	error = fcntl(socket_.fd, F_SETFL, status | O_NONBLOCK);
+	if (error == -1)
+		return ;
+
+	// define the server socket
+	socket_.address.sin_family = AF_INET;
+	socket_.address.sin_port = htons(port);
+	socket_.address.sin_addr.s_addr = INADDR_ANY;
+
+	// bind the socket to our specified IP and port
+	error = bind(socket_.fd, (struct sockaddr*) &socket_.address, sizeof socket_.address);
+	if (error == -1)
+		return ;
+	error = listen(socket_.fd, queue_length);
+	if (error == -1)
+		return ;
 }
 
 Server::~Server()
@@ -20,7 +46,7 @@ void	Server::PollEventHandler()
 	// evaluate the returned events
 	for (size_t idx = 0; idx < poll_fds_.size() && poll_events_ready; ++idx)
 	{
-		if (poll_fds_[idx].fd == server_fd_.fd)
+		if (poll_fds_[idx].fd == socket_.fd)
 		{
 			// if (poll_fds_[idx].revents & POLLIN) // there is data to read
 			// 	accept_client
@@ -54,14 +80,38 @@ void	Server::ResetPollFdFlags()
 	}
 }
 
-void	Server::ErasePollFd(pollfd* fd)
+// should only be called by user deconstructor!!
+void	Server::ErasePollFd(pollfd* poll_fd)
 {
 	for(std::vector<pollfd>::iterator it = poll_fds_.begin(); it != poll_fds_.end(); ++it)
 	{
-		if(it.base() == fd)
+		if(it->fd == poll_fd->fd)
 		{
 			poll_fds_.erase(it);
 			break ;
 		}
 	}
+}
+
+void	Server::Accept()
+{
+	int				conn_fd;
+	struct sockaddr	their_addr;
+	socklen_t		addr_size;
+
+
+	addr_size = sizeof(their_addr);
+	conn_fd = accept(socket_.fd, &their_addr, &addr_size);
+
+	// error handling
+	if (conn_fd == -1)
+		return ;
+
+	AddConnection((struct pollfd){.fd = conn_fd, .events = POLLEVENTS, .revents = 0}, their_addr);
+}
+
+void Server::AddConnection(struct pollfd poll_fd, struct sockaddr addr)
+{
+	poll_fds_.push_back(poll_fd);
+	Irc::AddUser(&poll_fds_.back());
 }

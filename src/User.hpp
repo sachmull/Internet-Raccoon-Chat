@@ -7,7 +7,6 @@
 
 #include "Server.hpp"
 #include "Irc.hpp"
-#include "Socket.hpp"
 
 /**
  * User handling
