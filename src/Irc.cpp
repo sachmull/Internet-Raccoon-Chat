@@ -1,4 +1,5 @@
 #include <Irc.hpp>
+#include <iostream>
 // #include <Server.hpp>
 
 std::map<std::string, Channel>		Irc::channels_;

@@ -24,6 +24,7 @@ Server::Server(int port, int queue_length)
 	socket_.address.sin_family = AF_INET;
 	socket_.address.sin_port = htons(port);
 	socket_.address.sin_addr.s_addr = INADDR_ANY;
+	std::cout << socket_.address.sin_addr.s_addr << std::endl;
 
 	// bind the socket to our specified IP and port
 	error = bind(socket_.fd, (struct sockaddr*) &socket_.address, sizeof(socket_.address));
@@ -32,6 +33,7 @@ Server::Server(int port, int queue_length)
 	error = listen(socket_.fd, queue_length);
 	if (error == -1)
 		return ;
+	poll_fds_.push_back((struct pollfd){.fd = socket_.fd, .events = POLLEVENTS, .revents = 0});
 }
 
 Server::~Server()
@@ -47,9 +49,10 @@ void	Server::PollEventHandler()
 	if (poll_events_ready == -1)
 		; //error here or in demultiplexer?
 	// evaluate the returned events
+	std::cout << "pollevents ready: " << poll_events_ready << std::cout;
 	for (size_t idx = 0; idx < poll_fds_.size() && poll_events_ready; ++idx)
 	{
-		std::cout << "here" << std::endl;
+		try{
 		if (poll_fds_[idx].fd == socket_.fd)
 		{
 			if (poll_fds_[idx].revents & POLLIN) // there is data to read
@@ -58,21 +61,23 @@ void	Server::PollEventHandler()
 				std::cout << "accepted" << std::endl;
 			}
 		}
-		try{
-			if (poll_fds_[idx].revents != 0)
+		else if (poll_fds_[idx].revents != 0)
+		{
+			--poll_events_ready;
+			if (poll_fds_[idx].revents & POLLIN) // there is data to read
 			{
-				--poll_events_ready;
-				if (poll_fds_[idx].revents & POLLIN) // there is data to read
-					irc_.Recv(poll_fds_[idx].fd);
-				if (poll_fds_[idx].revents & POLLOUT)
-					irc_.Send(poll_fds_[idx].fd);
-				if (poll_fds_[idx].revents & POLLERR)
-					irc_.Error(poll_fds_[idx].fd);
-				if (poll_fds_[idx].revents & POLLHUP)
-					irc_.ClosedClient(poll_fds_[idx].fd); // recv should call close if pipe empty
-				if (poll_fds_[idx].revents & POLLNVAL)
-					; // fd not open
+				irc_.Recv(poll_fds_[idx].fd);
+				std::cout <<"pollin" << std::endl;
 			}
+			if (poll_fds_[idx].revents & POLLOUT)
+				irc_.Send(poll_fds_[idx].fd);
+			if (poll_fds_[idx].revents & POLLERR)
+				irc_.Error(poll_fds_[idx].fd);
+			if (poll_fds_[idx].revents & POLLHUP)
+				irc_.ClosedClient(poll_fds_[idx].fd); // recv should call close if pipe empty
+			if (poll_fds_[idx].revents & POLLNVAL)
+				; // fd not open
+		}
 		} catch (std::exception& e) { std::cerr << "exception caught: " << e.what() << '\n'; }
 	}
 }

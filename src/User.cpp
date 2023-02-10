@@ -23,6 +23,9 @@ bool	User::Recv()
 		input_buff_.clear();
 	if (c_received == 0 && client_closed_)
 		User::CloseConnection();
+	for (std::vector<char>::iterator it = input_buff_.begin(); it != input_buff_.end(); ++it)
+		std::cout << *it << std::endl;
+	
 	return (true);
 }
 
