@@ -19,7 +19,7 @@ typedef struct message_s {
 class Parser {
 	private:
 		std::string				input;
-		std::string::iterator	pos;
+		std::size_t	pos;
 
 	public:
 		Parser(std::string input);
@@ -32,12 +32,7 @@ class Parser {
 
 		void	read_char();
 
-		bool	is_letter();
-		bool	is_number();
-		bool	is_special();
-		bool	is_chstring();
-		bool	is_nonwhite();
-
+		void	skip_whitespace();
 		std::pair<std::string, std::string>	split(std::string str, char c);
 };
 

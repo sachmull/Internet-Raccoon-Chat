@@ -1,7 +1,8 @@
 #include <Parser.hpp>
+#include <iostream>
 
 Parser::Parser(std::string input)
-: input(input), pos(input.begin())
+: input(input), pos(0)
 {}
 
 message_t	Parser::parse_message() {
@@ -9,6 +10,9 @@ message_t	Parser::parse_message() {
 
 	message.prefix = parse_prefix();
 	message.command = parse_command();
+	while (input[pos] != '\r' && input[pos]) {
+		message.params.push_back(parse_param());
+	}
 
 	return message;
 }
@@ -18,12 +22,12 @@ prefix_t	Parser::parse_prefix() {
 	std::pair<std::string, std::string>	substrs;
 	std::string							prefix_literal;
 
-	if (*pos == ':') {
+	if (input[pos] == ':') {
 		pos += input.find(' ');
 
 		substrs = split(input, ' ');
 		prefix_literal = substrs.first;
-		input = substrs.second;
+		// input = substrs.second;	// uncomment this to cut the prefix from the input str, invalidates pos
 
 		substrs = split(prefix_literal, '@');
 		prefix_literal = substrs.first;
@@ -40,68 +44,43 @@ prefix_t	Parser::parse_prefix() {
 std::string	Parser::parse_command() {
 	std::string	command;
 
-	// skip whitespace
-	while (*pos == ' ') {
+	skip_whitespace();
+
+	while (input[pos] && input[pos] != ' ') {
+		command += input[pos];
 		++pos;
 	}
 
 	return command;
 }
 
-// std::string	Parser::parse_param() {
-// 	std::string	param;
+std::string	Parser::parse_param() {
+	std::string	param;
+	char		end_char = ' ';
 
-// 	while (*pos == ' ') {
-// 		read_char();
-// 	}
+	skip_whitespace();
 
-// 	if (*pos == ':') {
-// 		++pos;
-// 	}
-// }
+	if (input[pos] == ':') {
+		++pos;
+		end_char = '\r';
+	}
+
+	while (input[pos] && input[pos] != end_char) {
+		param += input[pos];
+		++pos;
+	}
+
+	return param;
+}
 
 void	Parser::read_char() {
 	++pos;
 }
 
-bool	Parser::is_letter() {
-	if ((*pos >= 'a' && *pos <= 'z') || (*pos >= 'A' && *pos <= 'Z')) {
-		return true;
+void	Parser::skip_whitespace() {
+	while (input[pos] == ' ' && input[pos]) {
+		read_char();
 	}
-
-	return false;
-}
-
-bool	Parser::is_number() {
-	if (*pos >= '0' && *pos <= '9') {
-		return true;
-	}
-
-	return false;
-}
-
-bool	Parser::is_special() {
-	if (*pos == '-' || *pos == '[' || *pos == ']' || *pos == '\\' || *pos == '`' || *pos == '^' || *pos == '{' || *pos == '}') {
-		return true;
-	}
-
-	return false;
-}
-
-bool	Parser::is_chstring() {
-	if (*pos != ' ' && *pos != '\a' && *pos != '\0' && *pos != '\r' && *pos != '\n' && *pos != ',') {
-		return true;
-	}
-
-	return false;
-}
-
-bool	Parser::is_nonwhite() {
-	if (*pos != ' ' && *pos != '\0' && *pos != '\r' && *pos != '\n') {
-		return true;
-	}
-
-	return false;
 }
 
 std::pair<std::string, std::string>	Parser::split(std::string str, char c) {
