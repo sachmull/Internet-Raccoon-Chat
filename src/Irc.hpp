@@ -40,8 +40,8 @@ class Irc
 		static void	Error(int fd);
 		static void	ClosedClient(int fd);
 
-		void	DeleteCollector(User* conn_identifier);
-		void	EventDistributor();
+		static void	DeleteCollector(User* conn_identifier);
+		static void	EventDistributor();
 
 
 	private:
