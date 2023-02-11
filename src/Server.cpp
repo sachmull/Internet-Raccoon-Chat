@@ -23,8 +23,8 @@ Server::Server(int port, int queue_length)
 	// define the server socket
 	socket_.address.sin_family = AF_INET;
 	socket_.address.sin_port = htons(port);
+	std::cout << "port: " << socket_.address.sin_port << std::endl;
 	socket_.address.sin_addr.s_addr = INADDR_ANY;
-	std::cout << socket_.address.sin_addr.s_addr << std::endl;
 
 	// bind the socket to our specified IP and port
 	error = bind(socket_.fd, (struct sockaddr*) &socket_.address, sizeof(socket_.address));

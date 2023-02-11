@@ -5,6 +5,7 @@
 #include <vector>
 #include <sys/socket.h>
 
+#include <ModeDefine.hpp>
 
 class Channel;
 
@@ -31,6 +32,7 @@ class User
 		void	Send(); // sends message to client -> reads from output buff
 		void	ParseInputBuff(); //server parser
 		void	ClosedClient(); // sets client to closed and trys to receive data until 0
+		void	ClosedConnection();
 		void	Error();
 
 /* =================			User Operations			================= */
@@ -46,15 +48,10 @@ class User
 
 /* =================			Operator Operations			================= */
 
-		// void	KickUser(std::string user);
-		// void	Mode(std::string user); //invite only
-		// void	InviteUser(std::string user);
+		void	SetMode(); //invite only
+		void	InviteUser(std::string nickname);
+		void	KickUser(std::string nickname);
 		// void	ChangeTopic(std::string new_topic);
-
-
-/* =================				Helpers				================= */
-		int		WriteOutputBuff(std::vector<char>& msg);
-		bool	IsOperator();
 
 /* =================				Getter				================= */
 		const std::string&	GetNickname() const;
@@ -62,8 +59,14 @@ class User
 /* =================				Setter				================= */
 		void	SetOperator(bool set_as_op);
 	
+/* =================				Helpers				================= */
+		int		WriteOutputBuff(std::vector<char>& msg);
+		bool	IsOperator();
+
 	private:
+
 		void	CloseConnection(); // closes connection and adds it to delete collector of multiplexer
+
 
 /* =================				Testfunctions				================= */
 		void	MiniParse();

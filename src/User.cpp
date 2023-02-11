@@ -44,6 +44,8 @@ bool	User::Recv()
 
 void	User::Send()
 {
+	if (output_buff_.empty())
+		return ;
 	int bytesRead = send(socket_->fd, static_cast<char*>(output_buff_.data()), output_buff_.size(), 0);
 	if( bytesRead > 0)
 		output_buff_.erase(output_buff_.begin(), output_buff_.begin()+ bytesRead);
@@ -57,11 +59,22 @@ void	User::ClosedClient()
 	User::Recv();
 }
 
+void	User::ClosedConnection()
+{
+	User::CloseConnection();
+}
+
 void	User::Error()
 {
 }
 
-void	User::CloseConnection() { Irc::DeleteCollector(this->socket_->fd); }
+void	User::CloseConnection()
+{
+	DisconnectFromChannel();
+	Irc::DeleteCollector(this->socket_->fd);
+	Server::ErasePollFd(socket_);
+	
+}
 
 
 /* =================			User Operations			================= */
@@ -76,8 +89,8 @@ void	User::SendPrivateMessage(std::string nickname, std::vector<char>& msg)
 void	User::ConnectToChannel(std::string channel_name)
 {
 	channel_ = Irc::GetChannel(channel_name);
-	if (channel_ != NULL)
-		channel_->RegisterUser(this);
+	if (channel_ != NULL && (channel_->RegisterUser(this) == false))
+		channel_ = NULL;
 }
 
 void	User::DisconnectFromChannel()
@@ -97,7 +110,7 @@ void	User::BroadcastMessage(std::vector<char>& msg)
 
 void	User::ExitServer()
 {
-	Irc::DeleteCollector(this->socket_->fd); // maybe direct delete so that it cant pollin?
+	CloseConnection(); // maybe direct delete so that it cant pollin?
 }
 
 void	User::SetNickname(std::string nickname)
@@ -121,25 +134,29 @@ void	User::GetOperator(std::string password)
 
 /* =================			Operator Operations			================= */
 
-// void	User::KickUser(std::string user)
-// {
-// 	if(is_operator_ == false)
-// 		return ;
-// }
+void	User::SetMode() //invite only
+{
+	if(is_operator_ == false)
+		return ;
+	channel_->SetMode(MODE_INVITE_ONLY);
 
-// void	User::Mode(std::string user) //invite only
-// {
-// 	if(is_operator_ == false)
-// 		return ;
+}
 
-// }
+void	User::InviteUser(std::string nickname)
+{
+	if(is_operator_ == false || channel_ == NULL)
+		return ;
+	//send invite msg to user?
+	//what happens if invited user changes nickname? atm saved as user handle not nickname specific
+	channel_->AddInvitedUser(Irc::GetUserHandle(nickname));
+}
 
-// void	User::InviteUser(std::string user)
-// {
-// 	if(is_operator_ == false)
-// 		return ;
-
-// }
+void	User::KickUser(std::string nickname)
+{
+	if(is_operator_ == false || channel_ == NULL)
+		return ;
+	channel_->KickUser(Irc::GetUserHandle(nickname));
+}
 
 // void	User::ChangeTopic(std::string new_topic)
 // {
@@ -176,10 +193,10 @@ const std::string&	User::GetNickname() const
 
 void	User::MiniParse()
 {
-	std::string strmsg = "test msg";
+	std::string strmsg = "test msg\n";
 	std::vector<char> testmsg;
 	testmsg.insert(testmsg.begin(), strmsg.begin(), strmsg.end());
-	strmsg = "broadcasting yes yes";
+	strmsg = "broadcasting yes yes\n";
 	std::vector<char> broadcastmsg;
 	broadcastmsg.insert(broadcastmsg.begin(), strmsg.begin(), strmsg.end());
 	std::vector<char> channelname;
@@ -198,8 +215,14 @@ void	User::MiniParse()
 		ConnectToChannel("testchannel");
 	if (input_buff_.at(0) == '5') //disconnect
 		DisconnectFromChannel();
-	if (input_buff_.at(0) == '6') //disconnect
+	if (input_buff_.at(0) == '6') //broadcast_message
 		BroadcastMessage(broadcastmsg);
+	if (input_buff_.at(0) == '7') //sets to invite only
+		SetMode();
+	if (input_buff_.at(0) == '8')
+		InviteUser(VecToStr(input_buff_));
+	if (input_buff_.at(0) == '9')
+		KickUser(VecToStr(input_buff_));
 	input_buff_.clear();
 }
 

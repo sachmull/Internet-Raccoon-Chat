@@ -1,7 +1,7 @@
 NAME := ircserv
 
 # tools
-CC := c++
+CC := c++ -g
 CFLAGS := -Wall -Wextra -Werror -std=c++98  -I./inc/
 COBJFLAGS := $(CFLAGS) -c
 
