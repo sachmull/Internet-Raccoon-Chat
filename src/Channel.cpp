@@ -24,7 +24,7 @@ void	Channel::DeregisterUser(User* user)
 
 	for(; it != registered_users_.end(); ++it)
 	{
-		if (*it == user)
+		if (*it.base() == user)
 			break ;
 	}
 	if (it != registered_users_.end())
@@ -43,4 +43,9 @@ void	Channel::BroadcastMsg(std::vector<char> msg)
 	{
 		(*it)->WriteOutputBuff(msg);
 	}
+}
+
+std::string	Channel::GetName()
+{
+	return name_;
 }

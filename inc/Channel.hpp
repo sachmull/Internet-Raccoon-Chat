@@ -31,6 +31,7 @@ class Channel
 		void	DeregisterUser(User* user);
 		void	BroadcastMsg(std::vector<char> msg);
 
+		std::string	GetName();
 	private:
 };
 

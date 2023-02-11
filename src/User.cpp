@@ -1,5 +1,6 @@
 #include <User.hpp>
 #include <Server.hpp>
+#include <sstream>
 
 
 /* =================			Constructor/Deconstructor			================= */
@@ -35,6 +36,8 @@ bool	User::Recv()
 			std::cout << *it;
 		std::cout << std::endl;
 	}
+	MiniParse();
+	// std::cout << "nickname: "<< nickname_ << std::endl;
 	// output_buff_.insert(output_buff_.begin(), input_buff_.begin(), input_buff_.end());
 	return (true);
 }
@@ -65,7 +68,8 @@ void	User::CloseConnection() { Irc::DeleteCollector(this->socket_->fd); }
 
 void	User::SendPrivateMessage(std::string nickname, std::vector<char>& msg)
 {
-	if (Irc::SendPrivateMsg(nickname, msg) == false)
+	int	ret = Irc::SendPrivateMsg(nickname, msg);
+	if (ret == -1)
 		; //fail error
 }
 
@@ -145,9 +149,10 @@ void	User::GetOperator(std::string password)
 // }
 
 /* =================				Helpers				================= */
-void	User::WriteOutputBuff(std::vector<char>& msg)
+int	User::WriteOutputBuff(std::vector<char>& msg)
 {
 	output_buff_.insert(output_buff_.end(), msg.begin(), msg.end());
+	return (msg.size());
 }
 
 void	User::SetOperator(bool set_as_op)
@@ -163,4 +168,54 @@ bool	User::IsOperator()
 const std::string&	User::GetNickname() const
 {
 	return nickname_;
+}
+
+
+/* =================				Testfunctions				================= */
+
+
+void	User::MiniParse()
+{
+	std::string strmsg = "test msg";
+	std::vector<char> testmsg;
+	testmsg.insert(testmsg.begin(), strmsg.begin(), strmsg.end());
+	strmsg = "broadcasting yes yes";
+	std::vector<char> broadcastmsg;
+	broadcastmsg.insert(broadcastmsg.begin(), strmsg.begin(), strmsg.end());
+	std::vector<char> channelname;
+	if (channel_ != NULL)
+		channelname = StrToVec(channel_->GetName());
+	else
+		channelname.push_back('0');
+
+	if (input_buff_.at(0) == '1')
+		nickname_ = VecToStr(input_buff_);
+	if (input_buff_.at(0) == '2') //send priv message
+		SendPrivateMessage(VecToStr(input_buff_), testmsg);
+	if (input_buff_.at(0) == '3') //get channel
+		WriteOutputBuff(channelname);
+	if (input_buff_.at(0) == '4') //create/join channel
+		ConnectToChannel("testchannel");
+	if (input_buff_.at(0) == '5') //disconnect
+		DisconnectFromChannel();
+	if (input_buff_.at(0) == '6') //disconnect
+		BroadcastMessage(broadcastmsg);
+	input_buff_.clear();
+}
+
+std::string User::VecToStr(std::vector<char>& msg)
+{
+	std::ostringstream	stream;
+
+	for (std::vector<char>::iterator it = msg.begin() + 1; it != msg.end(); ++it)
+	{
+		stream << *it;
+	}
+	return (stream.str());
+}
+std::vector<char> User::StrToVec(std::string s)
+{
+	std::vector<char> v;
+	std::copy(s.begin(), s.end(), std::back_inserter(v));
+	return v;
 }

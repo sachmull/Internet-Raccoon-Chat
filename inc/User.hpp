@@ -53,7 +53,7 @@ class User
 
 
 /* =================				Helpers				================= */
-		void	WriteOutputBuff(std::vector<char>& msg);
+		int		WriteOutputBuff(std::vector<char>& msg);
 		bool	IsOperator();
 
 /* =================				Getter				================= */
@@ -64,6 +64,14 @@ class User
 	
 	private:
 		void	CloseConnection(); // closes connection and adds it to delete collector of multiplexer
+
+/* =================				Testfunctions				================= */
+		void	MiniParse();
+
+		std::string VecToStr(std::vector<char>& msg);
+		std::vector<char> StrToVec(std::string s);
+
+
 };
 
 // bool operator==(const User& lhs, const User& rhs);

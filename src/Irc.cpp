@@ -94,13 +94,12 @@ int Irc::GetUserFd(std::string& nickname)
 	return (-1);
 }
 
-bool Irc::SendPrivateMsg(std::string nickname, std::vector<char>& msg)
+int Irc::SendPrivateMsg(std::string nickname, std::vector<char>& msg)
 {
 	int	fd = GetUserFd(nickname);
 	if (fd == -1)
-		return false;
-	conns_.at(fd).WriteOutputBuff(msg);
-	return true;
+		return -1;
+	return conns_.at(fd).WriteOutputBuff(msg);
 }
 
 
