@@ -37,6 +37,8 @@ class Message {
 
 	public:
 		Message();
+
+	friend std::ostream&	operator<<(std::ostream& os, const Message& msg);
 };
 
 class MsgParser {

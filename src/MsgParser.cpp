@@ -6,6 +6,31 @@ Message::Message()
 : command(), params(), is_complete(false)
 {}
 
+std::ostream&	operator<<(std::ostream& os, const Message& msg) {
+	if (msg.is_complete) {
+		os << "Prefix:" << std::endl;
+		os << "name:\t\t" << msg.prefix.name << std::endl;
+		os << "user:\t\t" << msg.prefix.user << std::endl;
+		os << "host:\t\t" << msg.prefix.host << std::endl;
+		os << std::endl;
+		os << "Command:\t" << msg.command << std::endl;
+		os << std::endl;
+		os << "Parameters\t" << std::endl;
+
+		for (std::vector<std::vector<std::string> >::const_iterator it = msg.params.begin(); it != msg.params.end(); ++it) {
+			for (std::vector<std::string>::const_iterator jt = it->begin(); jt != it->end(); ++jt) {
+				os << "| " << *jt << " |";
+			}
+			os << std::endl;
+		}
+	} else {
+		os << "Message was not yet fully received" << std::endl;
+	}
+	os << std::endl;
+
+	return os;
+}
+
 
 //	MsgParser
 MsgParser::MsgParser()
@@ -134,10 +159,19 @@ void	MsgParser::parse_params(Message& msg) {
 			buf.clear();
 			msg.params.push_back(std::vector<std::string>());
 			skip_whitespace();
+			if (input[pos] == ':') {	// tailing param
+				++pos;	// jump over the :
+				while (input[pos] != '\0' && input[pos] != '\r') {
+					buf += input[pos];
+					++pos;
+				}
+
+				break ;
+			}
 		} else if (input[pos] == ',') {
 			msg.params.back().push_back(buf);
 			buf.clear();
-			++pos;	// Jump over the ,
+			++pos;	// jump over the ,
 		} else {
 			buf += input[pos];
 			++pos;
