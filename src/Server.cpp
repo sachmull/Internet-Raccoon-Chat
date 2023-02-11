@@ -49,14 +49,14 @@ void	Server::PollEventHandler()
 	if (poll_events_ready == -1)
 		; //error here or in demultiplexer?
 	// evaluate the returned events
-	if (poll_events_ready > 0)
-	{
+	// if (poll_events_ready > 0)
+	// {
 		// std::cout << "pollevents ready: " << poll_events_ready << std::endl;
 		
 		// std::cout << "poll fd size: " << poll_fds_.size() << std::endl;
-	}
+	// }
 		
-	for (size_t idx = 0; idx < poll_fds_.size() && poll_events_ready; ++idx)
+	for (size_t idx = 0; idx < poll_fds_.size() && poll_events_ready; ++idx) //delete idx < poll_fds_.size()?
 	{
 		try{
 		if (poll_fds_[idx].fd == socket_.fd && poll_fds_[idx].revents != 0)

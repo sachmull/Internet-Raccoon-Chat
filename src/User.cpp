@@ -33,12 +33,18 @@ bool	User::Recv()
 			std::cout << *it;
 		std::cout << std::endl;
 	}
+
+	output_buff_.insert(output_buff_.begin(), input_buff_.begin(), input_buff_.end());
 	return (true);
 }
 
 void	User::Send()
 {
-	
+	int bytesRead = send(socket_->fd, static_cast<char*>(output_buff_.data()), output_buff_.size(), 0);
+	if( bytesRead > 0)
+		output_buff_.erase(output_buff_.begin(), output_buff_.begin()+ bytesRead);
+	else
+		;
 }
 
 void	User::ClosedClient()
