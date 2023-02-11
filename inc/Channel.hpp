@@ -21,9 +21,10 @@ class Channel
 {
 	private:
 		std::vector<User*>	registered_users_;
+		std::string			name_;
 
 	public:
-		Channel();
+		Channel(std::string name);
 		~Channel();
 
 		void	RegisterUser(User* user);

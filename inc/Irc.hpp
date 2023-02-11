@@ -33,16 +33,14 @@ class Irc
 		Irc();
 		~Irc();
 
+		static void	EventDistributor();
+/* =================			Poll Events			================= */
 		static void	Recv(int fd);
 		static void	Send(int fd);
 		static void	Error(int fd);
 		static void	ClosedClient(int fd);
 
-		static void	DeleteCollector(int fd);
-		static void EmptyDeleteCollector();
-
-
-		static void	EventDistributor();
+/* =================			Channel Operations			================= */
 
 		// static void		CreateChannel(std::string channel_name);
 		static bool		DeleteChannel(std::string channel_name);
@@ -50,10 +48,16 @@ class Irc
 
 
 
-
+/* =================			User Operations			================= */
 		static bool	SendPrivateMsg(std::string nickname, std::vector<char>& msg);
 		static void	AddUser(pollfd* poll_fd);
-		static int	SearchUser(std::string& nickname);
+		static int	GetUserFd(std::string& nickname);
+
+
+/* =================			GarbageCollector			================= */
+
+		static void	DeleteCollector(int fd);
+		static void EmptyDeleteCollector();
 	private:
 };
 

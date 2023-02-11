@@ -1,7 +1,7 @@
 #include <Channel.hpp>
 // #include <Server.hpp>
 
-Channel::Channel()
+Channel::Channel(std::string name) : name_(name)
 {
 
 }
@@ -34,7 +34,7 @@ void	Channel::DeregisterUser(User* user)
 		//set new operator if user was operator
 	}
 	if (registered_users_.size() == 0)
-		; //set channel to be deleted
+		; //delete channel
 }
 
 void	Channel::BroadcastMsg(std::vector<char> msg)

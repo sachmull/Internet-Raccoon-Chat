@@ -15,6 +15,8 @@ Irc::~Irc()
 	
 }
 
+/* =================			Poll Events			================= */
+
 void	Irc::Recv(int fd)
 {
 	conns_.at(fd).Recv();
@@ -54,37 +56,35 @@ void	Irc::EmptyDeleteCollector()
 // 	channels_.insert(std::pair<std::string, Channel>(channel_name, Channel()));
 // }
 
+/* =================			Channel Operations			================= */
+
 bool Irc::DeleteChannel(std::string channel_name)
 {
 	return channels_.erase(channel_name);
 }
 
+// gets channel, creates channel if channel does not exist
 Channel* Irc::GetChannel(std::string channel_name)
 {
 	 
 
 	std::pair<channel_iterator, bool>	channel;
 
-	channel = channels_.insert(std::pair<std::string, Channel>(channel_name, Channel()));
+	channel = channels_.insert(std::pair<std::string, Channel>(channel_name, Channel(channel_name)));
 	return &(channel.first->second);
 }
+
+
+/* =================			User Operations			================= */
+
 
 void Irc::AddUser(pollfd* poll_fd)
 {
 	conns_.insert(std::pair<int, User>(poll_fd->fd, User(poll_fd)));
 }
 
-
-bool Irc::SendPrivateMsg(std::string nickname, std::vector<char>& msg)
-{
-	int	fd = SearchUser(nickname);
-	if (fd == -1)
-		return false;
-	conns_.at(fd).WriteOutputBuff(msg);
-	return true;
-}
-
-int Irc::SearchUser(std::string& nickname)
+//returns -1 when no user found
+int Irc::GetUserFd(std::string& nickname)
 {
 	for(conn_iterator it = conns_.begin(); it != conns_.end(); ++it)
 	{
@@ -93,6 +93,16 @@ int Irc::SearchUser(std::string& nickname)
 	}
 	return (-1);
 }
+
+bool Irc::SendPrivateMsg(std::string nickname, std::vector<char>& msg)
+{
+	int	fd = GetUserFd(nickname);
+	if (fd == -1)
+		return false;
+	conns_.at(fd).WriteOutputBuff(msg);
+	return true;
+}
+
 
 
 
