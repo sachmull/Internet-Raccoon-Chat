@@ -27,7 +27,7 @@ bool	User::Recv()
 	if (c_received == -1)
 		input_buff_.clear();
 	else if (c_received == 0 && client_closed_)
-		User::CloseConnection();
+		User::ClosedConnection();
 	else 
 	{
 		for (int i = 0; i < c_received; ++i)
@@ -61,20 +61,16 @@ void	User::ClosedClient()
 
 void	User::ClosedConnection()
 {
-	User::CloseConnection();
+	DisconnectFromChannel();
+	Irc::DeleteCollector(this->socket_->fd);
+	Server::ErasePollFd(socket_);
 }
 
 void	User::Error()
 {
 }
 
-void	User::CloseConnection()
-{
-	DisconnectFromChannel();
-	Irc::DeleteCollector(this->socket_->fd);
-	Server::ErasePollFd(socket_);
-	
-}
+
 
 
 /* =================			User Operations			================= */
@@ -115,7 +111,7 @@ void	User::BroadcastMessage(std::vector<char>& msg)
 
 void	User::ExitServer()
 {
-	CloseConnection(); // maybe direct delete so that it cant pollin?
+	ClosedConnection(); // maybe direct delete so that it cant pollin?
 }
 
 void	User::SetNickname(std::string nickname)

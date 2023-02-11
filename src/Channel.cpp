@@ -24,7 +24,7 @@ bool	Channel::RegisterUser(User* user)
 	try{
 	if (user == NULL)
 		return false;
-	if ((mode_flags_ && MODE_INVITE_ONLY) && !IsUserInvited(user))
+	if ((mode_flags_ & MODE_INVITE_ONLY) && !IsUserInvited(user))
 		return false; //not invited error
 	std::vector<User*>::iterator it = registered_users_.begin();
 	for(; it != registered_users_.end(); ++it)
@@ -82,8 +82,8 @@ std::string	Channel::GetName()
 // sets flag for channel mode
 void	Channel::SetMode(size_t flag)
 {
-	mode_flags_ += flag;
-	if (mode_flags_ && MODE_INVITE_ONLY)
+	mode_flags_ &= flag;
+	if (mode_flags_ & MODE_INVITE_ONLY)
 		std::cout << "invite only mode" << std::endl;
 	else
 		std::cout << "NOT invite only mode" << std::endl;

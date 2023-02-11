@@ -13,7 +13,7 @@ int main(void)
 	std::cout << msg;
 
 	try{
-		Server Serv(6666, 0);
+		Server Serv(6664, 0);
 
 		while(1)
 		{
