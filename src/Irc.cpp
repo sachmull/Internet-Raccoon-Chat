@@ -49,17 +49,50 @@ void	Irc::EmptyDeleteCollector()
 	conns_to_delete_.clear();
 }
 
-void Irc::CreateChannel(std::string name)
+// void Irc::CreateChannel(std::string channel_name)
+// {
+// 	channels_.insert(std::pair<std::string, Channel>(channel_name, Channel()));
+// }
+
+bool Irc::DeleteChannel(std::string channel_name)
 {
-	channels_.insert(std::pair<std::string, Channel>(name, Channel()));
+	return channels_.erase(channel_name);
 }
 
-bool Irc::DeleteChannel(std::string name)
+Channel* Irc::GetChannel(std::string channel_name)
 {
-	return channels_.erase(name);
+	 
+
+	std::pair<channel_iterator, bool>	channel;
+
+	channel = channels_.insert(std::pair<std::string, Channel>(channel_name, Channel()));
+	return &(channel.first->second);
 }
 
 void Irc::AddUser(pollfd* poll_fd)
 {
 	conns_.insert(std::pair<int, User>(poll_fd->fd, User(poll_fd)));
 }
+
+
+bool Irc::SendPrivateMsg(std::string nickname, std::vector<char>& msg)
+{
+	int	fd = SearchUser(nickname);
+	if (fd == -1)
+		return false;
+	conns_.at(fd).WriteOutputBuff(msg);
+	return true;
+}
+
+int Irc::SearchUser(std::string& nickname)
+{
+	for(conn_iterator it = conns_.begin(); it != conns_.end(); ++it)
+	{
+		if (nickname == it->second.GetNickname())
+			return(it->first);
+	}
+	return (-1);
+}
+
+
+
