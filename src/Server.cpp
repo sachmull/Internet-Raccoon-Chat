@@ -10,15 +10,16 @@ Server::Server(int port, int queue_length)
 	// create the server socket
 	socket_.fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (socket_.fd == -1)
-		return ;
+		throw std::runtime_error("socket") ;
+
 
 	// make the server socket unblocking
 	int status = fcntl(socket_.fd, F_GETFL, 0);
 	if (status == -1)
-		return ;
+		throw std::runtime_error("fcntl") ;
 	error = fcntl(socket_.fd, F_SETFL, status | O_NONBLOCK);
 	if (error == -1)
-		return ;
+		throw std::runtime_error("fcntl") ;
 
 	// define the server socket
 	socket_.address.sin_family = AF_INET;
@@ -29,10 +30,10 @@ Server::Server(int port, int queue_length)
 	// bind the socket to our specified IP and port
 	error = bind(socket_.fd, (struct sockaddr*) &socket_.address, sizeof(socket_.address));
 	if (error == -1)
-		return ;
+		throw std::runtime_error("bind") ;
 	error = listen(socket_.fd, queue_length);
 	if (error == -1)
-		return ;
+		throw std::runtime_error("listn") ;
 	poll_fds_.push_back((struct pollfd){.fd = socket_.fd, .events = POLLEVENTS, .revents = 0});
 }
 
@@ -44,7 +45,7 @@ Server::~Server()
 void	Server::PollEventHandler()
 {
 	ResetPollFdFlags();
-	pollfd*	poll_fds_array = &poll_fds_[0]; 
+	pollfd*	poll_fds_array = &poll_fds_[0];
 	int		poll_events_ready = poll(poll_fds_array, poll_fds_.size(), 0); //handle timeout
 	if (poll_events_ready == -1)
 		; //error here or in demultiplexer?
@@ -58,7 +59,7 @@ void	Server::PollEventHandler()
 		
 	for (size_t idx = 0; idx < poll_fds_.size() && poll_events_ready; ++idx) //delete idx < poll_fds_.size()?
 	{
-		try{
+		// try{
 		if (poll_fds_[idx].fd == socket_.fd && poll_fds_[idx].revents != 0)
 		{
 			--poll_events_ready;
@@ -82,7 +83,7 @@ void	Server::PollEventHandler()
 			if (poll_fds_[idx].revents & POLLNVAL)
 				; // fd not open
 		}
-		} catch (std::exception& e) { std::cerr << "exception caught: " << e.what() << '\n'; }
+		// } catch (std::exception& e) { std::cerr << "exception caught: " << e.what() << '\n'; }
 	}
 }
 

@@ -61,6 +61,8 @@ class User
 	
 /* =================				Helpers				================= */
 		int		WriteOutputBuff(std::vector<char>& msg);
+		int		WriteOutputBuff(std::string msg);
+		
 		bool	IsOperator();
 
 	private:
