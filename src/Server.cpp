@@ -3,10 +3,11 @@ std::vector<pollfd>			Server::poll_fds_;
 Irc							Server::irc_;
 Server::Socket				Server::socket_;
 
-Server::Server(int port, int queue_length)
+Server::Server(int port, int queue_length, std::string password)
 {
 	int	error;
 
+	irc_.SetPassword(password);
 	// create the server socket
 	socket_.fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (socket_.fd == -1)

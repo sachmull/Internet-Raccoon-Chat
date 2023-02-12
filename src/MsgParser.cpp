@@ -196,7 +196,7 @@ void	Executor::execute(Message& msg, User& user) {
 		PRINTLN("JOIN");
 		user.ConnectToChannel(msg.params[0][0]);
 	} else if (msg.command == PASS) {
-		TODO("PASS");
+		user.Authenticate(msg.params[0][0]);
 	} else if (msg.command == NICK) {
 		PRINTLN("NICK");
 		user.SetNickname(msg.params[0][0]);

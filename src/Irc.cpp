@@ -5,6 +5,7 @@
 std::map<std::string, Channel>		Irc::channels_;
 std::map<int, User>					Irc::conns_;
 std::vector<int>					Irc::conns_to_delete_;
+std::string							Irc::password_;
 
 Irc::Irc()
 {
@@ -15,6 +16,10 @@ Irc::~Irc()
 	
 }
 
+void	Irc::SetPassword(std::string password)
+{
+	password_ = password;
+}
 /* =================			Poll Events			================= */
 
 void	Irc::Recv(int fd)
@@ -42,27 +47,6 @@ void	Irc::ClosedConnection(int fd)
 	conns_.at(fd).ClosedConnection();
 }
 
-void	Irc::DeleteCollector(int fd)
-{
-	conns_to_delete_.push_back(fd);
-}
-
-void	Irc::EmptyDeleteCollector()
-{
-	for(std::vector<int>::iterator it = conns_to_delete_.begin(); it != conns_to_delete_.end(); ++it)
-	{
-		conns_.erase(*it);
-	}
-	conns_to_delete_.clear();
-}
-
-void	Irc::DeleteUserFromChannels(User *user)
-{
-	for(channel_iterator it = channels_.begin(); it != channels_.end(); ++it)
-	{
-		it->second.DeregisterUser(user);
-	}
-}
 
 // void Irc::CreateChannel(std::string channel_name)
 // {
@@ -150,6 +134,26 @@ void Irc::DistributeMsg(std::vector<std::string> names, std::string msg, User* u
 	}
 }
 
+/* =================			GarbageCollector			================= */
+
+
+
+/* =================			Password			================= */
+
+bool Irc::CompareServerPassword(std::string password)
+{
+	if (password == password_)
+		return true;
+	return false;
+}
+
+void Irc::SetServerPassword(std::string password)
+{
+	password = password_;
+}
+
+/* =================			Irc Events			================= */
+
 void Irc::GetReady()
 {
 	EmptyDeleteCollector();
@@ -157,5 +161,26 @@ void Irc::GetReady()
 }
 
 
+/* =================			GarbageCollector			================= */
 
+void	Irc::DeleteCollector(int fd)
+{
+	conns_to_delete_.push_back(fd);
+}
 
+void	Irc::EmptyDeleteCollector()
+{
+	for(std::vector<int>::iterator it = conns_to_delete_.begin(); it != conns_to_delete_.end(); ++it)
+	{
+		conns_.erase(*it);
+	}
+	conns_to_delete_.clear();
+}
+
+void	Irc::DeleteUserFromChannels(User *user)
+{
+	for(channel_iterator it = channels_.begin(); it != channels_.end(); ++it)
+	{
+		it->second.DeregisterUser(user);
+	}
+}

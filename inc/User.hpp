@@ -18,6 +18,7 @@ class User
 		std::vector<char>	input_buff_;
 		std::vector<char>	output_buff_;
 		bool				client_closed_;
+		bool				is_authenticated_;
 		std::string			username_;
 		std::string			nickname_;
 		pollfd*				socket_;
@@ -41,6 +42,7 @@ class User
 		void	ExitServer();
 		void	SetNickname(std::string nickname);
 		void	SetUsername(std::string username);
+		bool	Authenticate(std::string password);
 
 /* =================			Operator Operations			================= */
 
@@ -51,7 +53,7 @@ class User
 
 /* =================				Getter				================= */
 		const std::string&	GetNickname() const;
-
+		bool				IsAuthenticated() const;
 
 /* =================				Helpers				================= */
 		int		WriteOutputBuff(std::vector<char>& msg);

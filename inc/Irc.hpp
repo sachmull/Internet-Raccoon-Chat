@@ -29,12 +29,15 @@ class Irc
 		static std::map<int, User>					conns_;
 		static std::vector<int>						conns_to_delete_;
 		static std::vector<Channel*>				channels_to_delete_;
+		static std::string							password_;
+
 
 	public:
 		Irc();
 		~Irc();
-
+		static void	SetPassword(std::string password);
 		static void	EventDistributor();
+
 /* =================			Poll Events			================= */
 		static void	Recv(int fd);
 		static void	Send(int fd);
@@ -46,7 +49,6 @@ class Irc
 /* =================			Channel Operations			================= */
 
 		static void		DeleteUnusedChannels();
-
 		static Channel*	GetChannel(std::string channel_name);
 
 
@@ -59,7 +61,12 @@ class Irc
 		static int		GetUserFd(std::string& nickname);
 		static User*	GetUserHandle(std::string& nickname);
 
+/* =================			Irc Events			================= */
+		static void GetReady();
 
+/* =================			Password			================= */
+		static bool CompareServerPassword(std::string password);
+		static void SetServerPassword(std::string password);
 
 /* =================			GarbageCollector			================= */
 
@@ -67,8 +74,6 @@ class Irc
 		static void EmptyDeleteCollector();
 		static void	DeleteUserFromChannels(User *user);
 
-/* =================			IrcEvents			================= */
-		static void GetReady();
 	private:
 };
 

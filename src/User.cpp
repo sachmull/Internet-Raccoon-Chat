@@ -5,7 +5,7 @@
 
 
 /* =================			Constructor/Deconstructor			================= */
-User::User(pollfd* poll_fd) : client_closed_(false)
+User::User(pollfd* poll_fd) : client_closed_(false), is_authenticated_(false)
 {
 	socket_ = poll_fd;
 	input_buff_.reserve(512);
@@ -135,6 +135,18 @@ void	User::SetUsername(std::string username)
 	username_ = username;
 }
 
+bool	User::Authenticate(std::string password)
+{
+	if (Irc::CompareServerPassword(password) == true)
+	{
+		is_authenticated_ = true;
+		std::cout << GetNickname() << " now authenticated" << std::endl;
+		return true;
+	}
+	return false;
+}
+
+
 /* =================			Operator Operations			================= */
 
 void	User::SetMode(std::string channel_name) //invite only
@@ -175,6 +187,12 @@ void	User::KickUser(std::string channel_name, std::string nickname)
 
 // }
 
+
+/* =================				Getters				================= */
+const std::string&	User::GetNickname() const { return nickname_; }
+bool				User::IsAuthenticated() const { return is_authenticated_;}
+
+
 /* =================				Helpers				================= */
 int	User::WriteOutputBuff(std::vector<char>& msg)
 {
@@ -187,12 +205,6 @@ int	User::WriteOutputBuff(std::string msg)
 	std::copy(msg.begin(), msg.end(), std::back_inserter(output_buff_));
 	return msg.size();
 }
-
-const std::string&	User::GetNickname() const
-{
-	return nickname_;
-}
-
 
 /* =================				Testfunctions				================= */
 

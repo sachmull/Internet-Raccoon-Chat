@@ -32,7 +32,7 @@ class Server
 		static Socket						socket_;
 
 	public:
-		Server(int port, int queue_length);
+		Server(int port, int queue_length, std::string password);
 		~Server();
 
 		// static void InitServer();
