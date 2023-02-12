@@ -93,7 +93,7 @@ void	User::Error()
 
 void	User::SendMessage(std::vector<std::string>& names, std::string& msg)
 {
-	Irc::DistributeMsg(names, msg);
+	Irc::DistributeMsg(names, msg, this);
 }
 
 void	User::ConnectToChannel(std::string channel_name)

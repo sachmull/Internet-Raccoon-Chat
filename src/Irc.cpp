@@ -135,7 +135,7 @@ int Irc::SendPrivateMsg(std::string nickname, std::string msg) //msg to user
 	return conns_.at(fd).WriteOutputBuff(msg);
 }
 
-void Irc::DistributeMsg(std::vector<std::string> names, std::string msg)
+void Irc::DistributeMsg(std::vector<std::string> names, std::string msg, User* user)
 {
 	for (std::vector<std::string>::iterator it = names.begin(); it != names.end(); ++it)
 	{
@@ -144,10 +144,9 @@ void Irc::DistributeMsg(std::vector<std::string> names, std::string msg)
 		else 
 		{
 			Channel* channel = GetChannel(*it);
-			if (channel != NULL)
+			if (channel != NULL && channel->IsUserRegistered(user))
 				channel->BroadcastMsg(msg);
 		}
-		
 	}
 }
 

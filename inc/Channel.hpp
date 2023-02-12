@@ -44,11 +44,12 @@ class Channel
 		bool		KickUser(User* kick_user, User* commanding_user);
 		void		SetMode(size_t flag, User* commanding_user);
 
-		bool				gets_deleted;
+		bool		IsUserRegistered(User* user);
+
+		bool		gets_deleted;
 	private:
 		bool		IsOperator(User* user);
 		bool		IsUserInvited(User* user);
-		bool		IsUserRegistered(User* user);
 
 
 };
