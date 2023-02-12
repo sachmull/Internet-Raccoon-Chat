@@ -1,6 +1,7 @@
 #include <User.hpp>
 #include <Server.hpp>
 #include <sstream>
+#include <MsgParser.hpp>
 
 
 /* =================			Constructor/Deconstructor			================= */
@@ -36,7 +37,22 @@ bool	User::Recv()
 			std::cout << *it;
 		std::cout << std::endl;
 	}
-	MiniParse();
+	// MiniParse();
+	MsgParser	parser;
+	Message		msg;
+	Executor	exe;
+	std::string	input(input_buff_.begin(), input_buff_.end());
+	while (input.find('\n') != std::string::npos) {
+		// outputs the current line that will be fed into the parser
+		// std::cout << "to_parse:" << input.substr(0, input.find('\n')) << std::endl;
+		if ((msg = parser.parse(input.substr(0, input.find('\n')))).is_complete) {
+			// std::cout << msg;
+			exe.execute(msg, *this);
+		}
+		input = input.substr(input.find('\n') + 1, input.length());
+	}
+	input_buff_.clear();
+
 	// std::cout << "nickname: "<< nickname_ << std::endl;
 	// output_buff_.insert(output_buff_.begin(), input_buff_.begin(), input_buff_.end());
 	return (true);
