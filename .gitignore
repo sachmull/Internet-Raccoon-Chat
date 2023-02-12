@@ -2,3 +2,5 @@
 ircserv
 obj/
 .vscode
+.gitignore
+mini_client.py

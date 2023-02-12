@@ -1,8 +1,9 @@
 #ifndef MSG_PARSER_HPP
 #define MSG_PARSER_HPP
 
-#include <iostream>
+#include <User.hpp>
 
+#include <iostream>
 #include <vector>
 #include <string>
 
@@ -60,7 +61,7 @@ class MsgParser {
 
 class Executor {
 	public:
-		void	execute(Message& msg);
+		void	execute(Message& msg, User& user);
 };
 
 #endif

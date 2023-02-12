@@ -1,4 +1,5 @@
 #include <MsgParser.hpp>
+#include <Debug.hpp>
 
 
 //	Message
@@ -56,9 +57,10 @@ Message	MsgParser::parse(std::string to_parse) {
 	parse_params(msg);
 
 	// only lines that end with \r\n are considered complete messages
-	if (input[pos] != '\0' && input[pos] == '\r' && input[pos + 1] != '\0' && input[pos + 1] == '\n') {
-		msg.is_complete = true;
-	}
+	// if (input[pos] != '\0' && input[pos] == '\r' && input[pos + 1] != '\0' && input[pos + 1] == '\n') {
+	// 	msg.is_complete = true;
+	// }
+	msg.is_complete = true;
 
 	return msg;
 }
@@ -107,9 +109,7 @@ void	MsgParser::parse_prefix(Prefix& prefix) {
 void	MsgParser::parse_command(t_command_type& command_type) {
 	std::string	buf;
 
-	// if this function ggets called we aassume
-	// pos == ' ' && pos != '\0'
-	++pos;
+	skip_whitespace();
 
 	while (input[pos] != '\0' && input[pos] != ' ') {
 		buf += input[pos];
@@ -191,13 +191,13 @@ void	MsgParser::skip_whitespace() {
 
 
 // Executor
-void	Executor::execute(Message& msg) {
+void	Executor::execute(Message& msg, User& user) {
 	if (msg.command == JOIN) {
-		; //
+		user.ConnectToChannel(msg.params[0][0]);
 	} else if (msg.command == PASS) {
-		; //
+		std::cerr << __FILE__ << " " << __LINE__ << ": Error";
 	} else if (msg.command == NICK) {
-		; //
+		TODO("implement NICK-Tokenn execution");
 	} else if (msg.command == USER) {
 		; //
 	} else if (msg.command == PRIVMSG) {
@@ -205,7 +205,7 @@ void	Executor::execute(Message& msg) {
 	} else if (msg.command == OPER) {
 		; //
 	} else if (msg.command == QUIT) {
-		; //
+		std::cout << msg.params[0][0] << std::endl;
 	} else if (msg.command == KICK) {
 		; //
 	} else if (msg.command == MODE) {

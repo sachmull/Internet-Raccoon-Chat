@@ -1,5 +1,6 @@
 #include <Server.hpp>
 #include <MsgParser.hpp>
+#include <Debug.hpp>
 
 int main(void)
 {
@@ -9,7 +10,7 @@ int main(void)
 	msg = parser.parse(":name");
 	std::cout << msg;
 
-	msg = parser.parse(":name!user@host JOIN channel1,channel2 :key1 key2\r\n");
+	msg = parser.parse("PRIVMSG hey\r\n");
 	std::cout << msg;
 
 	Server Serv(6667, 0);
