@@ -26,6 +26,7 @@ class Channel
 	private:
 		std::vector<User*>	registered_users_;
 		std::vector<User*>	invited_users_;
+		User*				operator_;
 		std::string			name_;
 		size_t				mode_flags_;
 
@@ -34,15 +35,20 @@ class Channel
 		~Channel();
 
 		bool	RegisterUser(User* user);
-		void	DeregisterUser(User* user);
+		bool	DeregisterUser(User* user);
 		void	BroadcastMsg(std::vector<char> msg);
 
 		std::string	GetName();
-		void		SetMode(size_t flag);
-		bool		AddInvitedUser(User* user);
-		bool		IsUserInvited(User* user);
-		bool		KickUser(User* user);
+		bool		InviteUser(User* new_user, User* commanding_user);
+		bool		KickUser(User* kick_user, User* commanding_user);
+		void		SetMode(size_t flag, User* commanding_user);
 
+		bool				gets_deleted;
 	private:
+		bool		IsOperator(User* user);
+		bool		IsUserInvited(User* user);
+		bool		IsUserRegistered(User* user);
+
+
 };
 

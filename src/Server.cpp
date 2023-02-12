@@ -45,6 +45,7 @@ Server::~Server()
 void	Server::PollEventHandler()
 {
 	ResetPollFdFlags();
+	irc_.GetReady();
 	pollfd*	poll_fds_array = &poll_fds_[0];
 	int		poll_events_ready = poll(poll_fds_array, poll_fds_.size(), 0); //handle timeout
 	if (poll_events_ready == -1)
@@ -59,7 +60,7 @@ void	Server::PollEventHandler()
 		
 	for (size_t idx = 0; idx < poll_fds_.size() && poll_events_ready; ++idx) //delete idx < poll_fds_.size()?
 	{
-		// try{
+		try{
 		if (poll_fds_.at(idx).fd == socket_.fd)
 		{
 			if (poll_fds_.at(idx).revents & POLLIN) // there is data to read
@@ -83,7 +84,7 @@ void	Server::PollEventHandler()
 			if (poll_fds_.at(idx).revents & POLLNVAL)
 				irc_.ClosedConnection(poll_fds_.at(idx).fd); // fd not open
 		}
-		// } catch (std::exception& e) { std::cerr << "exception caught: " << e.what() << '\n'; }
+		} catch (std::exception& e) { std::cerr << "irc: " << e.what() << '\n'; }
 	}
 }
 

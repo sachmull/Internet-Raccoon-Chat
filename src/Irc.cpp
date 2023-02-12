@@ -56,6 +56,14 @@ void	Irc::EmptyDeleteCollector()
 	conns_to_delete_.clear();
 }
 
+void	Irc::DeleteUserFromChannels(User *user)
+{
+	for(channel_iterator it = channels_.begin(); it != channels_.end(); ++it)
+	{
+		it->second.DeregisterUser(user);
+	}
+}
+
 // void Irc::CreateChannel(std::string channel_name)
 // {
 // 	channels_.insert(std::pair<std::string, Channel>(channel_name, Channel()));
@@ -63,18 +71,28 @@ void	Irc::EmptyDeleteCollector()
 
 /* =================			Channel Operations			================= */
 
-bool Irc::DeleteChannel(std::string channel_name)
+void Irc::DeleteUnusedChannels()
 {
-	return channels_.erase(channel_name);
+	for(channel_iterator it = channels_.begin(); it != channels_.end();)
+	{
+		if (it->second.gets_deleted)
+		{
+			std::cout << "channel erased: "<< it->second.GetName() << std::endl;
+			channels_.erase(it);
+			it = channels_.begin();
+		}
+		else
+			++it;
+	}
 }
 
 // gets channel, creates channel if channel does not exist
 Channel* Irc::GetChannel(std::string channel_name)
 {
-	std::pair<channel_iterator, bool>	channel;
+	channel_iterator	new_channel;
 
-	channel = channels_.insert(std::pair<std::string, Channel>(channel_name, Channel(channel_name)));
-	return &(channel.first->second);
+	new_channel = channels_.insert(std::pair<std::string, Channel>(channel_name, Channel(channel_name))).first;
+	return &new_channel->second;
 }
 
 
@@ -115,6 +133,12 @@ int Irc::SendPrivateMsg(std::string nickname, std::vector<char>& msg)
 	if (fd == -1)
 		return -1;
 	return conns_.at(fd).WriteOutputBuff(msg);
+}
+
+void Irc::GetReady()
+{
+	EmptyDeleteCollector();
+	DeleteUnusedChannels();
 }
 
 
