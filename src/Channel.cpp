@@ -16,10 +16,10 @@ bool	Channel::RegisterUser(User* user)
 	try{
 	if (user == NULL)
 		return false;
-	if ((mode_flags_ & MODE_INVITE_ONLY) && !IsUserInvited(user))
-		return false; //not invited error
 	if (IsUserRegistered(user))
 		return true;
+	if ((mode_flags_ & MODE_INVITE_ONLY) && !IsUserInvited(user))
+		return false; //not invited error
 	std::vector<User*>::iterator it = registered_users_.begin();
 	for(; it != registered_users_.end(); ++it)
 	{
@@ -133,7 +133,7 @@ bool	Channel::IsUserRegistered(User* user)
 	{
 		if (*it == user)
 		{
-			user->WriteOutputBuff("already in channel" + name_ + "\n");
+			// user->WriteOutputBuff(user->GetNickname() + "already in channel" + name_ + "\n");
 			return true;
 		}
 	}
