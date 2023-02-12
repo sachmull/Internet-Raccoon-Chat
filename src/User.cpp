@@ -4,7 +4,7 @@
 
 
 /* =================			Constructor/Deconstructor			================= */
-User::User(pollfd* poll_fd) : client_closed_(false), is_operator_(false), channel_(NULL)
+User::User(pollfd* poll_fd) : client_closed_(false)
 {
 	socket_ = poll_fd;
 	input_buff_.reserve(512);
@@ -61,7 +61,7 @@ void	User::ClosedClient()
 
 void	User::ClosedConnection()
 {
-	DisconnectFromChannel();
+	Irc::DeleteUserFromChannels(this);
 	Irc::DeleteCollector(this->socket_->fd);
 	Server::ErasePollFd(socket_);
 }
@@ -84,29 +84,35 @@ void	User::SendPrivateMessage(std::string nickname, std::vector<char>& msg)
 
 void	User::ConnectToChannel(std::string channel_name)
 {
-	if (channel_ != NULL && channel_name == channel_->GetName())
-	{
-		std::cout << "already in channel" << std::endl;
-		WriteOutputBuff("already in channel");
-	}
-	channel_ = Irc::GetChannel(channel_name); //make it for multiple channels
-	if (channel_ != NULL && (channel_->RegisterUser(this) == false))
-		channel_ = NULL;
+	try{
+	Channel* channel = Irc::GetChannel(channel_name);
+	if (channel == NULL)
+		return ;
+	channel->RegisterUser(this); //make it for multiple channels
+	} catch (std::exception& e) { std::cerr << "co channel: " << e.what() << '\n'; }
 }
 
-void	User::DisconnectFromChannel()
+void	User::DisconnectFromChannel(std::string channel_name)
 {
-	if (channel_ == NULL)
+	try{
+
+	Channel* channel = Irc::GetChannel(channel_name);
+	if (channel == NULL)
 		return ;
-	channel_->DeregisterUser(this);
-	channel_ = NULL;
+	channel->DeregisterUser(this);
+	} catch (std::exception& e) { std::cerr << "disco channel: " << e.what() << '\n'; }
+
 }
 
-void	User::BroadcastMessage(std::vector<char>& msg)
+void	User::BroadcastMessage(std::string channel_name, std::vector<char>& msg)
 {
-	if (channel_ == NULL)
+	try{
+	Channel* channel = Irc::GetChannel(channel_name);
+	if (channel == NULL)
 		return ;
-	channel_->BroadcastMsg(msg);
+	channel->BroadcastMsg(msg);
+	} catch (std::exception& e) { std::cerr << "broadcast: " << e.what() << '\n'; }
+
 }
 
 void	User::ExitServer()
@@ -125,52 +131,38 @@ void	User::SetUsername(std::string username)
 	username_ = username;
 }
 
-void	User::GetOperator(std::string password)
-{
-	//check if password is true
-	(void)password; //in irc
-	is_operator_ = true;
-}
-
-
 /* =================			Operator Operations			================= */
 
-void	User::SetMode() //invite only
+void	User::SetMode(std::string channel_name) //invite only
 {
-	if (is_operator_ == false || channel_ == NULL)
-	{
-		std::cout << "no channel or is operator: " << is_operator_ << std::endl;
+	Channel* channel = Irc::GetChannel(channel_name);
+	if (channel == NULL)
 		return ;
-	}
-	channel_->SetMode(MODE_INVITE_ONLY);
+	channel->SetMode(MODE_INVITE_ONLY, this);
 
 }
 
-void	User::InviteUser(std::string nickname)
+void	User::InviteUser(std::string channel_name, std::string nickname)
 {
-	if (is_operator_ == false || channel_ == NULL)
-	{
-		std::cout << "no channel or is operator: " << is_operator_ << std::endl;
+	Channel* channel = Irc::GetChannel(channel_name);
+	if (channel == NULL)
 		return ;
-	}
 	//send invite msg to user?
 	//what happens if invited user changes nickname? atm saved as user handle not nickname specific
-	channel_->AddInvitedUser(Irc::GetUserHandle(nickname));
+	channel->InviteUser(Irc::GetUserHandle(nickname), this);
 }
 
-void	User::KickUser(std::string nickname)
+void	User::KickUser(std::string channel_name, std::string nickname)
 {
-	if (is_operator_ == false || channel_ == NULL)
-	{
-		std::cout << "no channel or is operator: " << is_operator_ << std::endl;
+	Channel* channel = Irc::GetChannel(channel_name);
+	if (channel == NULL)
 		return ;
-	}
-	channel_->KickUser(Irc::GetUserHandle(nickname));
+	channel->KickUser(Irc::GetUserHandle(nickname), this);
 }
 
 // void	User::ChangeTopic(std::string new_topic)
 // {
-// 	if (is_operator_ == false)
+// 	if (channel == NULL)
 // {
 	// std::cout << "no channel or is operator: " << is_operator_ << std::endl;
 // 		return ;
@@ -191,16 +183,6 @@ int	User::WriteOutputBuff(std::string msg)
 	return msg.size();
 }
 
-void	User::SetOperator(bool set_as_op)
-{
-	is_operator_ = set_as_op;
-}
-
-bool	User::IsOperator()
-{
-	return is_operator_;
-}
-
 const std::string&	User::GetNickname() const
 {
 	return nickname_;
@@ -212,37 +194,35 @@ const std::string&	User::GetNickname() const
 
 void	User::MiniParse()
 {
+	try{
+
 	std::string strmsg = "test msg\n";
 	std::vector<char> testmsg;
 	testmsg.insert(testmsg.begin(), strmsg.begin(), strmsg.end());
 	strmsg = "broadcasting yes yes\n";
 	std::vector<char> broadcastmsg;
 	broadcastmsg.insert(broadcastmsg.begin(), strmsg.begin(), strmsg.end());
-	std::vector<char> channelname;
-	if (channel_ != NULL)
-		channelname = StrToVec(channel_->GetName());
-	else
-		channelname.push_back('0');
-
+	std::string testchannel = "testchannel";
 	if (input_buff_.at(0) == '1')
 		nickname_ = VecToStr(input_buff_);
 	if (input_buff_.at(0) == '2') //send priv message
 		SendPrivateMessage(VecToStr(input_buff_), testmsg);
-	if (input_buff_.at(0) == '3') //get channel
-		WriteOutputBuff(channelname);
+	// if (input_buff_.at(0) == '3') //get channel
+	// 	WriteOutputBuff(channelname);
 	if (input_buff_.at(0) == '4') //create/join channel
 		ConnectToChannel("testchannel");
 	if (input_buff_.at(0) == '5') //disconnect
-		DisconnectFromChannel();
+		DisconnectFromChannel("testchannel");
 	if (input_buff_.at(0) == '6') //broadcast_message
-		BroadcastMessage(broadcastmsg);
+		BroadcastMessage("testchannel", broadcastmsg);
 	if (input_buff_.at(0) == '7') //sets to invite only
-		SetMode();
+		SetMode("testchannel");
 	if (input_buff_.at(0) == '8')
-		InviteUser(VecToStr(input_buff_));
+		InviteUser("testchannel", VecToStr(input_buff_));
 	if (input_buff_.at(0) == '9')
-		KickUser(VecToStr(input_buff_));
+		KickUser("testchannel", VecToStr(input_buff_));
 	input_buff_.clear();
+	}catch (std::exception& e) { std::cerr << "miniparse: " << e.what() << '\n'; }
 }
 
 std::string User::VecToStr(std::vector<char>& msg)

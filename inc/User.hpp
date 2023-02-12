@@ -18,11 +18,9 @@ class User
 		std::vector<char>	input_buff_;
 		std::vector<char>	output_buff_;
 		bool				client_closed_;
-		bool				is_operator_;
 		std::string			username_;
 		std::string			nickname_;
 		pollfd*				socket_;
-		Channel*			channel_;
 
 	public:
 		User(pollfd* poll_fd);
@@ -38,32 +36,27 @@ class User
 /* =================			User Operations			================= */
 
 		void	SendPrivateMessage(std::string nickname, std::vector<char>& msg);
-		void	BroadcastMessage(std::vector<char>& msg);
-		void	DisconnectFromChannel();
+		void	BroadcastMessage(std::string channel_name, std::vector<char>& msg);
+		void	DisconnectFromChannel(std::string channel_name);
 		void	ConnectToChannel(std::string channel_name);
 		void	ExitServer();
 		void	SetNickname(std::string nickname);
 		void	SetUsername(std::string username);
-		void	GetOperator(std::string password);
 
 /* =================			Operator Operations			================= */
 
-		void	SetMode(); //invite only
-		void	InviteUser(std::string nickname);
-		void	KickUser(std::string nickname);
+		void	SetMode(std::string channel_name); //invite only
+		void	InviteUser(std::string channel_name, std::string nickname);
+		void	KickUser(std::string channel_name, std::string nickname);
 		// void	ChangeTopic(std::string new_topic);
 
 /* =================				Getter				================= */
 		const std::string&	GetNickname() const;
 
-/* =================				Setter				================= */
-		void	SetOperator(bool set_as_op);
-	
+
 /* =================				Helpers				================= */
 		int		WriteOutputBuff(std::vector<char>& msg);
 		int		WriteOutputBuff(std::string msg);
-		
-		bool	IsOperator();
 
 	private:
 
