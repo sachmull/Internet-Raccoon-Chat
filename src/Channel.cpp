@@ -24,8 +24,14 @@ bool	Channel::RegisterUser(User* user)
 	try{
 	if (user == NULL)
 		return false;
-	if ((mode_flags_ && MODE_INVITE_ONLY) && !IsUserInvited(user))
+	if ((mode_flags_ & MODE_INVITE_ONLY) && !IsUserInvited(user))
 		return false; //not invited error
+	std::vector<User*>::iterator it = registered_users_.begin();
+	for(; it != registered_users_.end(); ++it)
+	{
+		if (*it.base() == user)
+			return true; //user already registered
+	}
 	registered_users_.push_back(user);
 	if (registered_users_.size() == 1)
 		user->SetOperator(true);
@@ -45,11 +51,17 @@ void	Channel::DeregisterUser(User* user)
 	if (it != registered_users_.end())
 	{
 		registered_users_.erase(it);
-		user->SetOperator(false);
 		//set new operator if user was operator
 	}
 	if (registered_users_.size() == 0)
-		; //delete channel
+		return ; //delete channel
+	else if (user->IsOperator())
+	{
+		user->SetOperator(false);
+		std::string tmp = "pw";
+		registered_users_.at(0)->GetOperator(tmp); //sets new operator
+		registered_users_.at(0)->WriteOutputBuff("you are now operator");
+	}
 }
 
 // broadcasts given msg to any user registered on the channel
@@ -70,8 +82,8 @@ std::string	Channel::GetName()
 // sets flag for channel mode
 void	Channel::SetMode(size_t flag)
 {
-	mode_flags_ += flag;
-	if (mode_flags_ && MODE_INVITE_ONLY)
+	mode_flags_ &= flag;
+	if (mode_flags_ & MODE_INVITE_ONLY)
 		std::cout << "invite only mode" << std::endl;
 	else
 		std::cout << "NOT invite only mode" << std::endl;

@@ -39,7 +39,7 @@ void	Irc::ClosedClient(int fd)
 
 void	Irc::ClosedConnection(int fd)
 {
-	conns_.at(fd).ClosedClient();
+	conns_.at(fd).ClosedConnection();
 }
 
 void	Irc::DeleteCollector(int fd)

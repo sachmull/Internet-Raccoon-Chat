@@ -28,7 +28,7 @@ bool	User::Recv()
 	if (c_received == -1)
 		input_buff_.clear();
 	else if (c_received == 0 && client_closed_)
-		User::CloseConnection();
+		User::ClosedConnection();
 	else 
 	{
 		for (int i = 0; i < c_received; ++i)
@@ -77,20 +77,16 @@ void	User::ClosedClient()
 
 void	User::ClosedConnection()
 {
-	User::CloseConnection();
+	DisconnectFromChannel();
+	Irc::DeleteCollector(this->socket_->fd);
+	Server::ErasePollFd(socket_);
 }
 
 void	User::Error()
 {
 }
 
-void	User::CloseConnection()
-{
-	DisconnectFromChannel();
-	Irc::DeleteCollector(this->socket_->fd);
-	Server::ErasePollFd(socket_);
-	
-}
+
 
 
 /* =================			User Operations			================= */
@@ -104,7 +100,12 @@ void	User::SendPrivateMessage(std::string nickname, std::vector<char>& msg)
 
 void	User::ConnectToChannel(std::string channel_name)
 {
-	channel_ = Irc::GetChannel(channel_name);
+	if (channel_ != NULL && channel_name == channel_->GetName())
+	{
+		std::cout << "already in channel" << std::endl;
+		WriteOutputBuff("already in channel");
+	}
+	channel_ = Irc::GetChannel(channel_name); //make it for multiple channels
 	if (channel_ != NULL && (channel_->RegisterUser(this) == false))
 		channel_ = NULL;
 }
@@ -126,7 +127,7 @@ void	User::BroadcastMessage(std::vector<char>& msg)
 
 void	User::ExitServer()
 {
-	CloseConnection(); // maybe direct delete so that it cant pollin?
+	ClosedConnection(); // maybe direct delete so that it cant pollin?
 }
 
 void	User::SetNickname(std::string nickname)
@@ -152,16 +153,22 @@ void	User::GetOperator(std::string password)
 
 void	User::SetMode() //invite only
 {
-	if(is_operator_ == false)
+	if (is_operator_ == false || channel_ == NULL)
+	{
+		std::cout << "no channel or is operator: " << is_operator_ << std::endl;
 		return ;
+	}
 	channel_->SetMode(MODE_INVITE_ONLY);
 
 }
 
 void	User::InviteUser(std::string nickname)
 {
-	if(is_operator_ == false || channel_ == NULL)
+	if (is_operator_ == false || channel_ == NULL)
+	{
+		std::cout << "no channel or is operator: " << is_operator_ << std::endl;
 		return ;
+	}
 	//send invite msg to user?
 	//what happens if invited user changes nickname? atm saved as user handle not nickname specific
 	channel_->AddInvitedUser(Irc::GetUserHandle(nickname));
@@ -169,15 +176,21 @@ void	User::InviteUser(std::string nickname)
 
 void	User::KickUser(std::string nickname)
 {
-	if(is_operator_ == false || channel_ == NULL)
+	if (is_operator_ == false || channel_ == NULL)
+	{
+		std::cout << "no channel or is operator: " << is_operator_ << std::endl;
 		return ;
+	}
 	channel_->KickUser(Irc::GetUserHandle(nickname));
 }
 
 // void	User::ChangeTopic(std::string new_topic)
 // {
-// 	if(is_operator_ == false)
+// 	if (is_operator_ == false)
+// {
+	// std::cout << "no channel or is operator: " << is_operator_ << std::endl;
 // 		return ;
+// }
 
 // }
 
@@ -186,6 +199,12 @@ int	User::WriteOutputBuff(std::vector<char>& msg)
 {
 	output_buff_.insert(output_buff_.end(), msg.begin(), msg.end());
 	return (msg.size());
+}
+
+int	User::WriteOutputBuff(std::string msg)
+{
+	std::copy(msg.begin(), msg.end(), std::back_inserter(output_buff_));
+	return msg.size();
 }
 
 void	User::SetOperator(bool set_as_op)
@@ -246,7 +265,7 @@ std::string User::VecToStr(std::vector<char>& msg)
 {
 	std::ostringstream	stream;
 
-	for (std::vector<char>::iterator it = msg.begin() + 1; it != msg.end(); ++it)
+	for (std::vector<char>::iterator it = msg.begin() + 1; it != msg.begin() + 4; ++it)
 	{
 		stream << *it;
 	}

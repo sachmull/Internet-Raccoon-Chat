@@ -61,12 +61,11 @@ class User
 	
 /* =================				Helpers				================= */
 		int		WriteOutputBuff(std::vector<char>& msg);
+		int		WriteOutputBuff(std::string msg);
+		
 		bool	IsOperator();
 
 	private:
-
-		void	CloseConnection(); // closes connection and adds it to delete collector of multiplexer
-
 
 /* =================				Testfunctions				================= */
 		void	MiniParse();

@@ -13,9 +13,12 @@ int main(void)
 	msg = parser.parse("PRIVMSG hey\r\n");
 	std::cout << msg;
 
-	Server Serv(6667, 0);
-	while(1)
-	{
-		Serv.PollEventHandler();
-	}
+	try{
+		Server Serv(6664, 0);
+
+		while(1)
+		{
+			Serv.PollEventHandler();
+		}
+	}catch(std::exception& e) {std::cerr << "main: " <<e.what() << std::endl;}
 }
