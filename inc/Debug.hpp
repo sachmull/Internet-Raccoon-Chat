@@ -17,6 +17,8 @@
 // Print on stdout, contains file, function and line information
 #define PRINTLN(msg) std::cout << CYAN << __FILE__ << ": " << __func__ << ": " << __LINE__ << ": " << (msg) << RESET << std::endl;
 
-#define TODO(msg) std::cout << CYAN << "TODO " << __FILE__ << ": " << __func__ << ": " << __LINE__ << ": " << (msg) << RESET << std::endl;
+#define TODO(msg) std::cout << YELLOW << "TODO " << __FILE__ << ": " << __func__ << ": " << __LINE__ << ": " << (msg) << RESET << std::endl;
+
+#define PRINTC(msg, color) std::cout << color << (msg) << RESET << std::endl;
 
 #endif

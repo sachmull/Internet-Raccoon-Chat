@@ -193,31 +193,34 @@ void	MsgParser::skip_whitespace() {
 // Executor
 void	Executor::execute(Message& msg, User& user) {
 	if (msg.command == JOIN) {
+		PRINTLN("JOIN");
 		user.ConnectToChannel(msg.params[0][0]);
 	} else if (msg.command == PASS) {
-		std::cerr << __FILE__ << " " << __LINE__ << ": Error";
+		TODO("PASS");
 	} else if (msg.command == NICK) {
-		TODO("implement NICK-Tokenn execution");
+		PRINTLN("NICK");
+		user.SetNickname(msg.params[0][0]);
 	} else if (msg.command == USER) {
-		; //
+		PRINTLN("USER");
+		user.SetUsername(msg.params[0][0]);
 	} else if (msg.command == PRIVMSG) {
-		; //
+		TODO("PRIVMSG");
 	} else if (msg.command == OPER) {
-		; //
+		TODO("OPER");
 	} else if (msg.command == QUIT) {
 		std::cout << msg.params[0][0] << std::endl;
 	} else if (msg.command == KICK) {
-		; //
+		TODO("KICK");
 	} else if (msg.command == MODE) {
-		; //
+		TODO("MODE");
 	} else if (msg.command == INVITE) {
-		; //
+		TODO("INVITE");
 	} else if (msg.command == TOPIC) {
-		; //
+		TODO("TOPIC");
 	} else if (msg.command == UNKNOWN) {
-		; //
+		TODO("UNKNOWN");
 	}
 	else {
-		// This should never be reached
+		ERROR("This should be an unreachable statement");
 	}
 }

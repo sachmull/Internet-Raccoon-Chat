@@ -4,15 +4,6 @@
 
 int main(void)
 {
-	Message	msg;
-	MsgParser	parser;
-
-	msg = parser.parse(":name");
-	std::cout << msg;
-
-	msg = parser.parse("PRIVMSG hey\r\n");
-	std::cout << msg;
-
 	try{
 		Server Serv(6664, 0);
 
