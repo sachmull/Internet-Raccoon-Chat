@@ -204,13 +204,13 @@ void	Executor::execute(Message& msg, User& user) {
 		PRINTLN("USER");
 		user.SetUsername(msg.params[0][0]);
 	} else if (msg.command == PRIVMSG) {
-		TODO("PRIVMSG");
+		user.SendMessage(msg.params[0], msg.params[1][0]);
 	} else if (msg.command == OPER) {
 		TODO("OPER");
 	} else if (msg.command == QUIT) {
 		std::cout << msg.params[0][0] << std::endl;
 	} else if (msg.command == KICK) {
-		TODO("KICK");
+		user.KickUser(msg.params[0][0], msg.params[1][0]);
 	} else if (msg.command == MODE) {
 		TODO("MODE");
 	} else if (msg.command == INVITE) {

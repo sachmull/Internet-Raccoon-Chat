@@ -127,12 +127,28 @@ User* Irc::GetUserHandle(std::string& nickname)
 	return NULL;
 }
 
-int Irc::SendPrivateMsg(std::string nickname, std::vector<char>& msg)
+int Irc::SendPrivateMsg(std::string nickname, std::string msg) //msg to user
 {
 	int	fd = GetUserFd(nickname);
 	if (fd == -1)
 		return -1;
 	return conns_.at(fd).WriteOutputBuff(msg);
+}
+
+void Irc::DistributeMsg(std::vector<std::string> names, std::string msg)
+{
+	for (std::vector<std::string>::iterator it = names.begin(); it != names.end(); ++it)
+	{
+		if (SendPrivateMsg(*it, msg) != -1)
+			; //inefficient because of string copying
+		else 
+		{
+			Channel* channel = GetChannel(*it);
+			if (channel != NULL)
+				channel->BroadcastMsg(msg);
+		}
+		
+	}
 }
 
 void Irc::GetReady()

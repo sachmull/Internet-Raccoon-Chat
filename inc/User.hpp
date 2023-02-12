@@ -35,8 +35,7 @@ class User
 
 /* =================			User Operations			================= */
 
-		void	SendPrivateMessage(std::string nickname, std::vector<char>& msg);
-		void	BroadcastMessage(std::string channel_name, std::vector<char>& msg);
+		void	SendMessage(std::vector<std::string>& names, std::string& msg);
 		void	DisconnectFromChannel(std::string channel_name);
 		void	ConnectToChannel(std::string channel_name);
 		void	ExitServer();
@@ -61,7 +60,7 @@ class User
 	private:
 
 /* =================				Testfunctions				================= */
-		void	MiniParse();
+		// void	MiniParse();
 
 		std::string VecToStr(std::vector<char>& msg);
 		std::vector<char> StrToVec(std::string s);

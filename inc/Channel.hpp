@@ -37,6 +37,7 @@ class Channel
 		bool	RegisterUser(User* user);
 		bool	DeregisterUser(User* user);
 		void	BroadcastMsg(std::vector<char> msg);
+		void	BroadcastMsg(std::string msg);
 
 		std::string	GetName();
 		bool		InviteUser(User* new_user, User* commanding_user);

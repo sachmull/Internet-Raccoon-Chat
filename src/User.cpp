@@ -91,11 +91,9 @@ void	User::Error()
 
 /* =================			User Operations			================= */
 
-void	User::SendPrivateMessage(std::string nickname, std::vector<char>& msg)
+void	User::SendMessage(std::vector<std::string>& names, std::string& msg)
 {
-	int	ret = Irc::SendPrivateMsg(nickname, msg);
-	if (ret == -1)
-		; //fail error
+	Irc::DistributeMsg(names, msg);
 }
 
 void	User::ConnectToChannel(std::string channel_name)
@@ -120,17 +118,6 @@ void	User::DisconnectFromChannel(std::string channel_name)
 
 }
 
-void	User::BroadcastMessage(std::string channel_name, std::vector<char>& msg)
-{
-	try{
-	Channel* channel = Irc::GetChannel(channel_name);
-	if (channel == NULL)
-		return ;
-	channel->BroadcastMsg(msg);
-	} catch (std::exception& e) { std::cerr << "broadcast: " << e.what() << '\n'; }
-
-}
-
 void	User::ExitServer()
 {
 	ClosedConnection(); // maybe direct delete so that it cant pollin?
@@ -139,6 +126,7 @@ void	User::ExitServer()
 void	User::SetNickname(std::string nickname)
 {
 	//protect against double nicknames
+	std::cout << "set nickname: " << nickname << std::endl;
 	nickname_ = nickname;
 }
 
@@ -170,6 +158,7 @@ void	User::InviteUser(std::string channel_name, std::string nickname)
 
 void	User::KickUser(std::string channel_name, std::string nickname)
 {
+	std::cout << "nickname length: " <<nickname.length() << std::endl;
 	Channel* channel = Irc::GetChannel(channel_name);
 	if (channel == NULL)
 		return ;
@@ -208,38 +197,38 @@ const std::string&	User::GetNickname() const
 /* =================				Testfunctions				================= */
 
 
-void	User::MiniParse()
-{
-	try{
+// void	User::MiniParse()
+// {
+// 	try{
 
-	std::string strmsg = "test msg\n";
-	std::vector<char> testmsg;
-	testmsg.insert(testmsg.begin(), strmsg.begin(), strmsg.end());
-	strmsg = "broadcasting yes yes\n";
-	std::vector<char> broadcastmsg;
-	broadcastmsg.insert(broadcastmsg.begin(), strmsg.begin(), strmsg.end());
-	std::string testchannel = "testchannel";
-	if (input_buff_.at(0) == '1')
-		nickname_ = VecToStr(input_buff_);
-	if (input_buff_.at(0) == '2') //send priv message
-		SendPrivateMessage(VecToStr(input_buff_), testmsg);
-	// if (input_buff_.at(0) == '3') //get channel
-	// 	WriteOutputBuff(channelname);
-	if (input_buff_.at(0) == '4') //create/join channel
-		ConnectToChannel("testchannel");
-	if (input_buff_.at(0) == '5') //disconnect
-		DisconnectFromChannel("testchannel");
-	if (input_buff_.at(0) == '6') //broadcast_message
-		BroadcastMessage("testchannel", broadcastmsg);
-	if (input_buff_.at(0) == '7') //sets to invite only
-		SetMode("testchannel");
-	if (input_buff_.at(0) == '8')
-		InviteUser("testchannel", VecToStr(input_buff_));
-	if (input_buff_.at(0) == '9')
-		KickUser("testchannel", VecToStr(input_buff_));
-	input_buff_.clear();
-	}catch (std::exception& e) { std::cerr << "miniparse: " << e.what() << '\n'; }
-}
+// 	std::string strmsg = "test msg\n";
+// 	std::vector<char> testmsg;
+// 	testmsg.insert(testmsg.begin(), strmsg.begin(), strmsg.end());
+// 	strmsg = "broadcasting yes yes\n";
+// 	std::vector<char> broadcastmsg;
+// 	broadcastmsg.insert(broadcastmsg.begin(), strmsg.begin(), strmsg.end());
+// 	std::string testchannel = "testchannel";
+// 	if (input_buff_.at(0) == '1')
+// 		nickname_ = VecToStr(input_buff_);
+// 	if (input_buff_.at(0) == '2') //send priv message
+// 		SendPrivateMessage(VecToStr(input_buff_), testmsg);
+// 	// if (input_buff_.at(0) == '3') //get channel
+// 	// 	WriteOutputBuff(channelname);
+// 	if (input_buff_.at(0) == '4') //create/join channel
+// 		ConnectToChannel("testchannel");
+// 	if (input_buff_.at(0) == '5') //disconnect
+// 		DisconnectFromChannel("testchannel");
+// 	if (input_buff_.at(0) == '6') //broadcast_message
+// 		BroadcastMessage("testchannel", broadcastmsg);
+// 	if (input_buff_.at(0) == '7') //sets to invite only
+// 		SetMode("testchannel");
+// 	if (input_buff_.at(0) == '8')
+// 		InviteUser("testchannel", VecToStr(input_buff_));
+// 	if (input_buff_.at(0) == '9')
+// 		KickUser("testchannel", VecToStr(input_buff_));
+// 	input_buff_.clear();
+// 	}catch (std::exception& e) { std::cerr << "miniparse: " << e.what() << '\n'; }
+// }
 
 std::string User::VecToStr(std::vector<char>& msg)
 {

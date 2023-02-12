@@ -30,6 +30,7 @@ bool	Channel::RegisterUser(User* user)
 	if (registered_users_.size() == 1)
 		operator_ = user;
 	} catch (std::exception& e) { std::cerr << "exception regi: " << e.what() << '\n'; }
+	std::cout << user->GetNickname() << " joined channel: " << GetName() << std::endl;
 	return true;
 }
 
@@ -47,6 +48,7 @@ bool	Channel::DeregisterUser(User* user)
 	registered_users_.erase(it);
 	if (user == operator_ && !registered_users_.empty())	//set new operator if user was operator
 	{
+		// only if no one is operator anymore
 		operator_ = registered_users_.at(0); //sets new operator
 		registered_users_.at(0)->WriteOutputBuff("you are now operator");
 	}
@@ -57,11 +59,20 @@ bool	Channel::DeregisterUser(User* user)
 	}
 	else
 		gets_deleted = false;
+	std::cout << user->GetNickname() << " left channel" << std::endl;
 	return true;
 }
 
 // broadcasts given msg to any user registered on the channel
 void	Channel::BroadcastMsg(std::vector<char> msg)
+{
+	for(std::vector<User*>::iterator it = registered_users_.begin(); it != registered_users_.end(); ++it)
+	{
+		(*it)->WriteOutputBuff(msg);
+	}
+}
+
+void	Channel::BroadcastMsg(std::string msg)
 {
 	for(std::vector<User*>::iterator it = registered_users_.begin(); it != registered_users_.end(); ++it)
 	{
@@ -97,6 +108,7 @@ bool	Channel::InviteUser(User* new_user, User* commanding_user)
 
 bool	Channel::KickUser(User* kick_user, User* commanding_user)
 {
+	std::cout << "kick: " << kick_user << "from: " << commanding_user << std::endl;
 	if (kick_user == NULL || IsOperator(commanding_user) == false)
 		return false;
 	DeregisterUser(kick_user);
@@ -121,7 +133,7 @@ bool	Channel::IsUserRegistered(User* user)
 	{
 		if (*it == user)
 		{
-			user->WriteOutputBuff("already in channel" + name_);
+			user->WriteOutputBuff("already in channel" + name_ + "\n");
 			return true;
 		}
 	}
@@ -132,7 +144,7 @@ bool	Channel::IsOperator(User* user)
 {
 	if (user != operator_)
 	{
-		user->WriteOutputBuff("you are not operator");
+		user->WriteOutputBuff("you are not operator\n");
 		return false;
 	}
 	return true;
