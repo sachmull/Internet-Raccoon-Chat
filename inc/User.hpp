@@ -46,7 +46,7 @@ class User
 
 /* =================			Operator Operations			================= */
 
-		void	SetMode(std::string channel_name); //invite only
+		void	SetMode(std::string channel_name, std::string mode); //invite only
 		void	InviteUser(std::string channel_name, std::string nickname);
 		void	KickUser(std::string channel_name, std::string nickname);
 		// void	ChangeTopic(std::string new_topic);

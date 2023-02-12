@@ -14,6 +14,7 @@ User::User(pollfd* poll_fd) : client_closed_(false), is_authenticated_(false)
 User::~User()
 {
 	// Server::ErasePollFd(socket_);
+	std::cout << "user deconstructor called" << std::endl;
 }
 
 
@@ -71,15 +72,18 @@ void	User::Send()
 
 void	User::ClosedClient()
 {
-	client_closed_ = true;
-	User::Recv();
+	std::cout << "closed client: " << GetNickname() << std::cout;
+	// client_closed_ = true;
+	// User::Recv();
+	ClosedConnection();
 }
 
 void	User::ClosedConnection()
 {
+	std::cout << "closed connection: " << GetNickname() << std::cout;
 	Irc::DeleteUserFromChannels(this);
 	Irc::DeleteCollector(this->socket_->fd);
-	Server::ErasePollFd(socket_);
+	Server::ErasePollFd(socket_->fd);
 }
 
 void	User::Error()
@@ -149,13 +153,17 @@ bool	User::Authenticate(std::string password)
 
 /* =================			Operator Operations			================= */
 
-void	User::SetMode(std::string channel_name) //invite only
+void	User::SetMode(std::string channel_name, std::string mode) //invite only
 {
 	Channel* channel = Irc::GetChannel(channel_name);
 	if (channel == NULL)
 		return ;
-	channel->SetMode(MODE_INVITE_ONLY, this);
-
+	if (mode == "+i")
+		channel->SetMode(MODE_INVITE_ONLY, this);
+	else if (mode == "-i")
+		channel->SetMode(0, this);
+	else
+		WriteOutputBuff("mode: wrong input");
 }
 
 void	User::InviteUser(std::string channel_name, std::string nickname)
@@ -181,7 +189,7 @@ void	User::KickUser(std::string channel_name, std::string nickname)
 // {
 // 	if (channel == NULL)
 // {
-	// std::cout << "no channel or is operator: " << is_operator_ << std::endl;
+// 	std::cout << "no channel or is operator: " << is_operator_ << std::endl;
 // 		return ;
 // }
 

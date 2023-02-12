@@ -212,9 +212,9 @@ void	Executor::execute(Message& msg, User& user) {
 	} else if (msg.command == KICK) {
 		user.KickUser(msg.params[0][0], msg.params[1][0]);
 	} else if (msg.command == MODE) {
-		TODO("MODE");
+		user.SetMode(msg.params[0][0], msg.params[1][0]);
 	} else if (msg.command == INVITE) {
-		TODO("INVITE");
+		user.InviteUser(msg.params[1][0], msg.params[0][0]);
 	} else if (msg.command == TOPIC) {
 		TODO("TOPIC");
 	} else if (msg.command == UNKNOWN) {

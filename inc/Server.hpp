@@ -37,7 +37,8 @@ class Server
 
 		// static void InitServer();
 		static void	PollEventHandler();
-		static void ErasePollFd(pollfd* poll_fd);
+		// static void ErasePollFd(pollfd* poll_fd);
+		static void ErasePollFd(int	fd);
 	
 	private:
 		static void	ResetPollFdFlags();

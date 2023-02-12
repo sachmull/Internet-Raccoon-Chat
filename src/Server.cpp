@@ -25,7 +25,6 @@ Server::Server(int port, int queue_length, std::string password)
 	// define the server socket
 	socket_.address.sin_family = AF_INET;
 	socket_.address.sin_port = htons(port);
-	std::cout << "port: " << socket_.address.sin_port << std::endl;
 	socket_.address.sin_addr.s_addr = INADDR_ANY;
 
 	// bind the socket to our specified IP and port
@@ -98,12 +97,25 @@ void	Server::ResetPollFdFlags()
 	}
 }
 
+// // should only be called by user deconstructor!!
+// void	Server::ErasePollFd(pollfd* poll_fd)
+// {
+// 	for(std::vector<pollfd>::iterator it = poll_fds_.begin(); it != poll_fds_.end(); ++it)
+// 	{
+// 		if(it->fd == poll_fd->fd)
+// 		{
+// 			poll_fds_.erase(it);
+// 			break ;
+// 		}
+// 	}
+// }
+
 // should only be called by user deconstructor!!
-void	Server::ErasePollFd(pollfd* poll_fd)
+void	Server::ErasePollFd(int fd)
 {
 	for(std::vector<pollfd>::iterator it = poll_fds_.begin(); it != poll_fds_.end(); ++it)
 	{
-		if(it->fd == poll_fd->fd)
+		if(it->fd == fd)
 		{
 			poll_fds_.erase(it);
 			break ;
