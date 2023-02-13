@@ -84,10 +84,10 @@ Channel* Irc::GetChannel(std::string channel_name)
 /* =================			User Operations			================= */
 
 //adds user to server conn vector
-void Irc::AddUser(pollfd* poll_fd)
+void Irc::AddUser(pollfd poll_fd)
 {
-	conns_.insert(std::pair<int, User>(poll_fd->fd, User(poll_fd)));
-	std::cout << "Irc Adduser fd: " << poll_fd->fd << std::endl;
+	conns_.insert(std::pair<int, User>(poll_fd.fd, User(poll_fd)));
+	std::cout << "Irc Adduser fd: " << poll_fd.fd << std::endl;
 }
 
 //returns -1 when no user found
@@ -135,6 +135,17 @@ void Irc::DistributeMsg(std::vector<std::string> names, std::string msg, User* u
 		}
 	}
 }
+
+bool	Irc::IsNicknameUsed(std::string& nickname)
+{
+	for(conn_iterator it = conns_.begin(); it != conns_.end(); ++it)
+	{
+		if (it->second.GetNickname() == nickname)
+			return true;
+	}
+	return false;
+}
+
 
 /* =================			GarbageCollector			================= */
 

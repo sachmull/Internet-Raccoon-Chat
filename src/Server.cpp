@@ -117,6 +117,7 @@ void	Server::ErasePollFd(int fd)
 	{
 		if(it->fd == fd)
 		{
+			close(it->fd);
 			poll_fds_.erase(it);
 			break ;
 		}
@@ -144,5 +145,5 @@ void Server::AddConnection(struct pollfd poll_fd, struct sockaddr addr)
 {
 	(void)addr;
 	poll_fds_.push_back(poll_fd);
-	Irc::AddUser(&poll_fds_.back());
+	Irc::AddUser(poll_fds_.back());
 }

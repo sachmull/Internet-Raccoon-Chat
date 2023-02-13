@@ -57,9 +57,10 @@ class Irc
 		static int		SendPrivateMsg(std::string from, std::string nickname, std::string msg);
 		static void		DistributeMsg(std::vector<std::string> names, std::string msg, User* user);
 
-		static void		AddUser(pollfd* poll_fd);
+		static void		AddUser(pollfd poll_fd);
 		static int		GetUserFd(std::string& nickname);
 		static User*	GetUserHandle(std::string& nickname);
+		static bool		IsNicknameUsed(std::string& nickname);
 
 /* =================			Irc Events			================= */
 		static void GetReady();
@@ -72,7 +73,7 @@ class Irc
 
 		static void	DeleteCollector(int fd);
 		static void EmptyDeleteCollector();
-		static void	DeleteUserFromChannels(User *user);
+		static void	DeleteUserFromChannels(User* user);
 
 	private:
 };
