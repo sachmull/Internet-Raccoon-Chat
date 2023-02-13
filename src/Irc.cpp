@@ -1,5 +1,6 @@
 #include <Irc.hpp>
 #include <iostream>
+#include <Debug.hpp>
 // #include <Server.hpp>
 
 std::map<std::string, Channel>		Irc::channels_;
@@ -111,19 +112,20 @@ User* Irc::GetUserHandle(std::string& nickname)
 	return NULL;
 }
 
-int Irc::SendPrivateMsg(std::string nickname, std::string msg) //msg to user
+int Irc::SendPrivateMsg(std::string from, std::string nickname, std::string msg) //msg to user
 {
 	int	fd = GetUserFd(nickname);
 	if (fd == -1)
 		return -1;
-	return conns_.at(fd).WriteOutputBuff(msg);
+	std::string	new_msg = ":" + from + " PRIVMSG " + nickname + " :" + msg + "\r\n";
+	return conns_.at(fd).WriteOutputBuff(new_msg);
 }
 
 void Irc::DistributeMsg(std::vector<std::string> names, std::string msg, User* user)
 {
 	for (std::vector<std::string>::iterator it = names.begin(); it != names.end(); ++it)
 	{
-		if (SendPrivateMsg(*it, msg) != -1)
+		if (SendPrivateMsg(user->GetNickname(), *it, msg) != -1)
 			; //inefficient because of string copying
 		else 
 		{
