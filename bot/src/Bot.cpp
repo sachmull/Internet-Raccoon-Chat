@@ -15,7 +15,7 @@ Bot::Bot(int port)
 	// assign IP, PORT
 	servaddr.sin_family = AF_INET;
 	servaddr.sin_port = htons(port);
-	servaddr.sin_addr.s_addr = INADDR_ANY; //set to local inet addr?
+	servaddr.sin_addr.s_addr = INADDR_ANY; //automatically sets to 127.0.0.1
 
 	// connect the client socket to server socket
 	while (connect(socket_.fd, (struct sockaddr*)&servaddr, sizeof(servaddr)) != 0) {

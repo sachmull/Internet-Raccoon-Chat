@@ -8,7 +8,6 @@ int main()
 		bot.InitBot("ewf");
 		while(1)
 		{
-			//infinity if disco from server
 			bot.Recv();
 			bot.SendTime();
 		}
