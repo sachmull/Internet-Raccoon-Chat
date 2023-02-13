@@ -42,7 +42,8 @@ class Channel
 		std::string	GetName();
 		bool		InviteUser(User* new_user, User* commanding_user);
 		bool		KickUser(User* kick_user, User* commanding_user);
-		void		SetMode(size_t flag, User* commanding_user);
+		void		AddMode(size_t flag, User* commanding_user);
+		void		RemoveMode(size_t flag, User* commanding_user);
 
 		bool		IsUserRegistered(User* user);
 

@@ -103,7 +103,7 @@ void	User::SendMessage(std::vector<std::string>& names, std::string& msg)
 void	User::ConnectToChannel(std::string channel_name)
 {
 	try{
-	Channel* channel = Irc::GetChannel(channel_name);
+	Channel* channel = Irc::CreateChannel(channel_name);
 	if (channel == NULL)
 		return ;
 	channel->RegisterUser(this); //make it for multiple channels
@@ -164,9 +164,9 @@ void	User::SetMode(std::string channel_name, std::string mode) //invite only
 	if (channel == NULL)
 		return ;
 	if (mode == "+i")
-		channel->SetMode(MODE_INVITE_ONLY, this);
+		channel->AddMode(MODE_INVITE_ONLY, this);
 	else if (mode == "-i")
-		channel->SetMode(0, this);
+		channel->RemoveMode(MODE_INVITE_ONLY, this);
 	else
 		WriteOutputBuff("mode: wrong input");
 }
