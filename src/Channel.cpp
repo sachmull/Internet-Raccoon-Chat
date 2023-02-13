@@ -50,7 +50,7 @@ bool	Channel::DeregisterUser(User* user)
 	{
 		// only if no one is operator anymore
 		operator_ = registered_users_.at(0); //sets new operator
-		registered_users_.at(0)->WriteOutputBuff("you are now operator");
+		registered_users_.at(0)->WriteOutputBuff("you are now operator\n");
 	}
 	if (registered_users_.empty())
 	{
@@ -123,7 +123,7 @@ bool	Channel::KickUser(User* kick_user, User* commanding_user)
 	if (kick_user == NULL || IsOperator(commanding_user) == false)
 		return false;
 	DeregisterUser(kick_user);
-	kick_user->WriteOutputBuff("you got kicked");
+	kick_user->WriteOutputBuff("you got kicked\n");
 	return true;
 }
 

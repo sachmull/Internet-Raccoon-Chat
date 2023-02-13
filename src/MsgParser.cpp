@@ -193,44 +193,47 @@ void	MsgParser::skip_whitespace() {
 
 // Executor
 void	Executor::execute(Message& msg, User& user) {
-	if (user.IsAuthenticated() == false)
+	if (user.IsRegistered() == false)
 	{
 	 	if (msg.command == PASS)
 		{
-			if(user.Authenticate(msg.params[0][0]) == false)
+			if(user.Register(msg.params[0][0]) == false)
 				user.WriteOutputBuff(err_passwd_mismatch());
 		}
 		else
 			user.WriteOutputBuff(err_passwd_mismatch());
 		return ;
 	}
-	if (msg.command == JOIN) {
-		PRINTLN("JOIN");
-		user.ConnectToChannel(msg.params[0][0]);
-	} else if (msg.command == NICK) {
+	if (msg.command == NICK) {
 		PRINTLN("NICK");
 		user.SetNickname(msg.params[0][0]);
 	} else if (msg.command == USER) {
 		PRINTLN("USER");
 		user.SetUsername(msg.params[0][0]);
-	} else if (msg.command == PRIVMSG) {
-		user.SendMessage(msg.params[0], msg.params[1][0]);
-	} else if (msg.command == OPER) {
-		TODO("OPER");
-	} else if (msg.command == QUIT) {
-		std::cout << msg.params[0][0] << std::endl;
-	} else if (msg.command == KICK) {
-		user.KickUser(msg.params[0][0], msg.params[1][0]);
-	} else if (msg.command == MODE) {
-		user.SetMode(msg.params[0][0], msg.params[1][0]);
-	} else if (msg.command == INVITE) {
-		user.InviteUser(msg.params[1][0], msg.params[0][0]);
-	} else if (msg.command == TOPIC) {
-		TODO("TOPIC");
-	} else if (msg.command == UNKNOWN) {
-		TODO("UNKNOWN");
+	} else if(user.IsAuthenticated() ==true) {
+		if (msg.command == JOIN) {
+			PRINTLN("JOIN");
+			user.ConnectToChannel(msg.params[0][0]);
+		} else if (msg.command == PRIVMSG) {
+			user.SendMessage(msg.params[0], msg.params[1][0]);
+		} else if (msg.command == OPER) {
+			TODO("OPER");
+		} else if (msg.command == QUIT) {
+			std::cout << msg.params[0][0] << std::endl;
+		} else if (msg.command == KICK) {
+			user.KickUser(msg.params[0][0], msg.params[1][0]);
+		} else if (msg.command == MODE) {
+			user.SetMode(msg.params[0][0], msg.params[1][0]);
+		} else if (msg.command == INVITE) {
+			user.InviteUser(msg.params[1][0], msg.params[0][0]);
+		} else if (msg.command == TOPIC) {
+			TODO("TOPIC");
+		} else if (msg.command == UNKNOWN) {
+			TODO("UNKNOWN");
+		} else {
+			ERROR("This should be an unreachable statement\n");
+		}
 	}
-	else {
-		ERROR("This should be an unreachable statement");
-	}
+	else
+		user.WriteOutputBuff("you are not authenticated\n");
 }
