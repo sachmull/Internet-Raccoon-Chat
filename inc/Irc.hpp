@@ -50,6 +50,8 @@ class Irc
 
 		static void		DeleteUnusedChannels();
 		static Channel*	GetChannel(std::string channel_name);
+		static Channel* CreateChannel(std::string channel_name);
+
 
 
 

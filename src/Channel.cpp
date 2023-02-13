@@ -87,14 +87,21 @@ std::string	Channel::GetName()
 }
 
 // sets flag for channel mode
-void	Channel::SetMode(size_t flag, User* commanding_user)
+void	Channel::AddMode(size_t flag, User* commanding_user)
 {
 	if (IsOperator(commanding_user) == false)
 		return ;
-	mode_flags_ = flag;
+	mode_flags_ |= flag;
 	if (mode_flags_ & MODE_INVITE_ONLY)
 		std::cout << "invite only mode" << std::endl;
-	else
+}
+
+void	Channel::RemoveMode(size_t flag, User* commanding_user)
+{
+	if (IsOperator(commanding_user) == false)
+		return ;
+	mode_flags_ ^= flag;
+	if (!(mode_flags_ & MODE_INVITE_ONLY))
 		std::cout << "NOT invite only mode" << std::endl;
 }
 

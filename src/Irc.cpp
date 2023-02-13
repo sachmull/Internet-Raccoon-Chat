@@ -49,10 +49,13 @@ void	Irc::ClosedConnection(int fd)
 }
 
 
-// void Irc::CreateChannel(std::string channel_name)
-// {
-// 	channels_.insert(std::pair<std::string, Channel>(channel_name, Channel()));
-// }
+Channel* Irc::CreateChannel(std::string channel_name)
+{
+	channel_iterator	new_channel;
+
+	new_channel = channels_.insert(std::pair<std::string, Channel>(channel_name, Channel(channel_name))).first;
+	return &new_channel->second;
+}
 
 /* =================			Channel Operations			================= */
 
@@ -74,10 +77,11 @@ void Irc::DeleteUnusedChannels()
 // gets channel, creates channel if channel does not exist
 Channel* Irc::GetChannel(std::string channel_name)
 {
-	channel_iterator	new_channel;
-
-	new_channel = channels_.insert(std::pair<std::string, Channel>(channel_name, Channel(channel_name))).first;
-	return &new_channel->second;
+	channel_iterator it = channels_.find(channel_name);
+	if (it == channels_.end())
+		return NULL;
+	else
+		return &(it->second);
 }
 
 
