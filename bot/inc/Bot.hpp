@@ -3,6 +3,9 @@
 #include <vector>
 #include <map>
 #include <exception>
+#include <ctime>
+#include <string>
+#include <time.h>
 #include <iostream>
 #include <stdio.h>
 #include <unistd.h>
@@ -27,8 +30,14 @@ class Bot
 		Bot(int port);
 		~Bot();
 
+		void	InitBot(std::string server_password);
+
 		void	Recv();
 		void	SendTime();
+		void	GetTime();
+
+		std::vector<char>	StrToOutputbuff(std::string s);
+
 
 	private:
 		Socket					socket_;

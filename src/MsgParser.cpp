@@ -220,6 +220,8 @@ void	Executor::execute(Message& msg, User& user) {
 			PRINTLN("JOIN");
 			user.ConnectToChannel(msg.params[0][0]);
 		} else if (msg.command == PRIVMSG) {
+			PRINTLN("PRIVMSG");
+
 			user.SendMessage(msg.params[0], msg.params[1][0]);
 		} else if (msg.command == OPER) {
 			TODO("OPER");
