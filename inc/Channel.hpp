@@ -28,6 +28,7 @@ class Channel
 		std::vector<User*>	invited_users_;
 		User*				operator_;
 		std::string			name_;
+		std::string			topic_;
 		size_t				mode_flags_;
 
 	public:
@@ -44,6 +45,8 @@ class Channel
 		bool		KickUser(User* kick_user, User* commanding_user);
 		void		AddMode(size_t flag, User* commanding_user);
 		void		RemoveMode(size_t flag, User* commanding_user);
+		void		SetTopic(std::string& new_topic, User* commanding_user);
+		void		GetTopic(User* commanding_user);
 
 		bool		IsUserRegistered(User* user);
 

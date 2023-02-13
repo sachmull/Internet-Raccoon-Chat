@@ -1,7 +1,7 @@
 #include <Channel.hpp>
 // #include <Server.hpp>
 
-Channel::Channel(std::string name) : name_(name), mode_flags_(0), gets_deleted(false)
+Channel::Channel(std::string name) : name_(name), topic_(""),  mode_flags_(0), gets_deleted(false)
 {
 
 }
@@ -50,7 +50,7 @@ bool	Channel::DeregisterUser(User* user)
 	{
 		// only if no one is operator anymore
 		operator_ = registered_users_.at(0); //sets new operator
-		registered_users_.at(0)->WriteOutputBuff("you are now operator");
+		registered_users_.at(0)->WriteOutputBuff("you are now operator\n");
 	}
 	if (registered_users_.empty())
 	{
@@ -92,8 +92,10 @@ void	Channel::AddMode(size_t flag, User* commanding_user)
 	if (IsOperator(commanding_user) == false)
 		return ;
 	mode_flags_ |= flag;
-	if (mode_flags_ & MODE_INVITE_ONLY)
+	if (flag == MODE_INVITE_ONLY)
 		std::cout << "invite only mode" << std::endl;
+	if (flag == MODE_TOPIC)
+		std::cout << "topic mode" << std::endl;
 }
 
 void	Channel::RemoveMode(size_t flag, User* commanding_user)
@@ -101,8 +103,10 @@ void	Channel::RemoveMode(size_t flag, User* commanding_user)
 	if (IsOperator(commanding_user) == false)
 		return ;
 	mode_flags_ ^= flag;
-	if (!(mode_flags_ & MODE_INVITE_ONLY))
+	if (flag == MODE_INVITE_ONLY)
 		std::cout << "NOT invite only mode" << std::endl;
+	if (flag == MODE_TOPIC)
+		std::cout << "NOT topic mode" << std::endl;
 }
 
 bool	Channel::InviteUser(User* new_user, User* commanding_user)
@@ -119,9 +123,28 @@ bool	Channel::KickUser(User* kick_user, User* commanding_user)
 	if (kick_user == NULL || IsOperator(commanding_user) == false)
 		return false;
 	DeregisterUser(kick_user);
-	kick_user->WriteOutputBuff("you got kicked");
+	kick_user->WriteOutputBuff("you got kicked\n");
 	return true;
 }
+
+void	Channel::SetTopic(std::string& new_topic, User* commanding_user)
+{
+	if (!(mode_flags_ & MODE_TOPIC))
+		commanding_user->WriteOutputBuff("channel is in no topic mode\n");
+	else if (IsOperator(commanding_user) == true)
+		commanding_user->WriteOutputBuff("changed topic to:" + new_topic + "\n");
+	else
+		commanding_user->WriteOutputBuff("you are not operator\n");
+}
+
+void	Channel::GetTopic(User* commanding_user)
+{
+	if (!(mode_flags_ & MODE_TOPIC))
+		commanding_user->WriteOutputBuff("channel is in no topic mode\n");
+	else
+		commanding_user->WriteOutputBuff(topic_ + "\n");
+}
+
 
 // returns true if a user is in the invited vector
 bool	Channel::IsUserInvited(User* user)

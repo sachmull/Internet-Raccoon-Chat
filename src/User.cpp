@@ -6,7 +6,7 @@
 
 
 /* =================			Constructor/Deconstructor			================= */
-User::User(pollfd poll_fd) : client_closed_(false), is_authenticated_(false)
+User::User(pollfd poll_fd) : client_closed_(false), is_registered_(false), is_authenticated_(false)
 {
 	socket_ = poll_fd;
 	input_buff_.reserve(512);
@@ -139,19 +139,23 @@ void	User::SetNickname(std::string nickname)
 	}
 	std::cout << "set nickname: " << nickname << std::endl;
 	nickname_ = nickname;
+	if (is_authenticated_ == false && !username_.empty())
+			is_authenticated_ = true;
 }
 
 void	User::SetUsername(std::string username)
 {
 	username_ = username;
+	if (is_authenticated_ == false && !nickname_.empty())
+		is_authenticated_ = true;
 }
 
-bool	User::Authenticate(std::string password)
+bool	User::Register(std::string password)
 {
 	if (Irc::CompareServerPassword(password) == true)
 	{
-		is_authenticated_ = true;
-		std::cout << GetNickname() << " now authenticated" << std::endl;
+		is_registered_ = true;
+		std::cout << GetNickname() << " now registered" << std::endl;
 		return true;
 	}
 	return false;
@@ -169,8 +173,12 @@ void	User::SetMode(std::string channel_name, std::string mode) //invite only
 		channel->AddMode(MODE_INVITE_ONLY, this);
 	else if (mode == "-i")
 		channel->RemoveMode(MODE_INVITE_ONLY, this);
+	else if (mode == "+t")
+		channel->AddMode(MODE_TOPIC, this);
+	else if (mode == "it")
+		channel->RemoveMode(MODE_TOPIC, this);
 	else
-		WriteOutputBuff("mode: wrong input");
+		WriteOutputBuff("mode: wrong input\n");
 }
 
 void	User::InviteUser(std::string channel_name, std::string nickname)
@@ -185,26 +193,33 @@ void	User::InviteUser(std::string channel_name, std::string nickname)
 
 void	User::KickUser(std::string channel_name, std::string nickname)
 {
-	std::cout << "nickname length: " <<nickname.length() << std::endl;
 	Channel* channel = Irc::GetChannel(channel_name);
 	if (channel == NULL)
 		return ;
 	channel->KickUser(Irc::GetUserHandle(nickname), this);
 }
 
-// void	User::ChangeTopic(std::string new_topic)
-// {
-// 	if (channel == NULL)
-// {
-// 	std::cout << "no channel or is operator: " << is_operator_ << std::endl;
-// 		return ;
-// }
+void	User::GetTopic(std::string channel_name)
+{
+	Channel* channel = Irc::GetChannel(channel_name);
+	if (channel == NULL)
+		return ;
+	channel->GetTopic(this);
+}
 
-// }
+void	User::SetTopic(std::string channel_name, std::string new_topic)
+{
+	Channel* channel = Irc::GetChannel(channel_name);
+	if (channel == NULL)
+		return ;
+	channel->SetTopic(new_topic, this);
+}
 
 
 /* =================				Getters				================= */
+
 const std::string&	User::GetNickname() const { return nickname_; }
+bool				User::IsRegistered() const { return is_registered_;}
 bool				User::IsAuthenticated() const { return is_authenticated_;}
 
 

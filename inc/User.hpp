@@ -18,6 +18,7 @@ class User
 		std::vector<char>	input_buff_;
 		std::vector<char>	output_buff_;
 		bool				client_closed_;
+		bool				is_registered_;
 		bool				is_authenticated_;
 		std::string			username_;
 		std::string			nickname_;
@@ -42,18 +43,21 @@ class User
 		void	ExitServer();
 		void	SetNickname(std::string nickname);
 		void	SetUsername(std::string username);
-		bool	Authenticate(std::string password);
+		bool	Register(std::string password);
+		void	GetTopic(std::string channel_name);
 
 /* =================			Operator Operations			================= */
 
 		void	SetMode(std::string channel_name, std::string mode); //invite only
 		void	InviteUser(std::string channel_name, std::string nickname);
 		void	KickUser(std::string channel_name, std::string nickname);
-		// void	ChangeTopic(std::string new_topic);
+		void	SetTopic(std::string channel_name, std::string new_topic);
 
 /* =================				Getter				================= */
 		const std::string&	GetNickname() const;
 		bool				IsAuthenticated() const;
+		bool				IsRegistered() const;
+
 
 /* =================				Helpers				================= */
 		int		WriteOutputBuff(std::vector<char>& msg);
