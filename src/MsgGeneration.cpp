@@ -22,9 +22,9 @@ std::string	err_no_text_to_send() {
 }
 
 std::string	err_nickname_in_use(std::string nickname) {
-	return "433 " + nickname + " :Nickname is already in use\r\n";
+	return ":raccoon.chat 433 " + nickname + " :Nickname is already in use\r\n";
 }
 
 std::string	err_passwd_mismatch() {
-	return "464 :Password incorrect\r\n";
+	return ":raccoon.chat 464 user :Password incorrect\r\n";
 }
