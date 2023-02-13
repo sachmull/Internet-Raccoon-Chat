@@ -54,7 +54,7 @@ class Irc
 
 
 /* =================			User Operations			================= */
-		static int		SendPrivateMsg(std::string nickname, std::string msg);
+		static int		SendPrivateMsg(std::string from, std::string nickname, std::string msg);
 		static void		DistributeMsg(std::vector<std::string> names, std::string msg, User* user);
 
 		static void		AddUser(pollfd poll_fd);
