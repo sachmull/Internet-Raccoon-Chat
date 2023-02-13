@@ -20,6 +20,7 @@ typedef enum e_command_type {
 	INVITE,
 	TOPIC,
 	UNKNOWN,
+	CAP,
 }	t_command_type;
 
 class Prefix {

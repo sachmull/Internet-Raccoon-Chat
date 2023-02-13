@@ -139,6 +139,8 @@ void	MsgParser::parse_command(t_command_type& command_type) {
 		command_type = INVITE;
 	} else if (buf == "TOPIC") {
 		command_type = TOPIC;
+	} else if (buf == "CAP") {
+		command_type = CAP;
 	}
 	else {
 		command_type = UNKNOWN;
@@ -204,7 +206,10 @@ void	Executor::execute(Message& msg, User& user) {
 			user.WriteOutputBuff(err_passwd_mismatch());
 		return ;
 	}
-	if (msg.command == NICK) {
+	if (msg.command == CAP)
+	{
+		user.WriteOutputBuff("CAP * LS :");
+	} else if (msg.command == NICK) {
 		PRINTLN("NICK");
 		user.SetNickname(msg.params[0][0]);
 	} else if (msg.command == USER) {
@@ -235,5 +240,7 @@ void	Executor::execute(Message& msg, User& user) {
 		}
 	}
 	else
+	{
 		user.WriteOutputBuff("you are not authenticated\n");
+	}
 }

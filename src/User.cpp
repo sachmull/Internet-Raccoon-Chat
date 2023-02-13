@@ -146,6 +146,7 @@ void	User::SetNickname(std::string nickname)
 void	User::SetUsername(std::string username)
 {
 	username_ = username;
+	std::cout << "set username: " << username << std::endl;
 	if (is_authenticated_ == false && !nickname_.empty())
 		is_authenticated_ = true;
 }
