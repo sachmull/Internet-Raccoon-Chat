@@ -79,10 +79,10 @@ void	Server::PollEventHandler()
 				irc_.Send(poll_fds_.at(idx).fd);
 			if (poll_fds_.at(idx).revents & POLLERR)
 				irc_.Error(poll_fds_.at(idx).fd);
-			if (poll_fds_.at(idx).revents & POLLHUP)
-				irc_.ClosedClient(poll_fds_.at(idx).fd); // recv should call close if pipe empty
-			if (poll_fds_.at(idx).revents & POLLNVAL)
-				irc_.ClosedConnection(poll_fds_.at(idx).fd); // fd not open
+			// if (poll_fds_.at(idx).revents & POLLHUP)
+				// irc_.ClosedClient(poll_fds_.at(idx).fd); // recv should call close if pipe empty
+			// if (poll_fds_.at(idx).revents & POLLNVAL)
+				// irc_.ClosedConnection(poll_fds_.at(idx).fd); // fd not open
 		}
 		} catch (std::exception& e) { std::cerr << "irc: " << e.what() << '\n'; }
 	}
@@ -144,5 +144,5 @@ void Server::AddConnection(struct pollfd poll_fd, struct sockaddr addr)
 {
 	(void)addr;
 	poll_fds_.push_back(poll_fd);
-	Irc::AddUser(&poll_fds_.back());
+	Irc::AddUser(poll_fds_.back());
 }

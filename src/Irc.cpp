@@ -57,7 +57,7 @@ void	Irc::ClosedConnection(int fd)
 
 void Irc::DeleteUnusedChannels()
 {
-	for(channel_iterator it = channels_.begin(); it != channels_.end();)
+	for(std::map<std::string, Channel>::iterator it = channels_.begin(); it != channels_.end();)
 	{
 		if (it->second.gets_deleted)
 		{
@@ -73,26 +73,26 @@ void Irc::DeleteUnusedChannels()
 // gets channel, creates channel if channel does not exist
 Channel* Irc::GetChannel(std::string channel_name)
 {
-	channel_iterator	new_channel;
+	std::map<std::string, Channel>::iterator	new_channel;
 
 	new_channel = channels_.insert(std::pair<std::string, Channel>(channel_name, Channel(channel_name))).first;
-	return &new_channel->second;
+	return &(new_channel->second);
 }
 
 
 /* =================			User Operations			================= */
 
 //adds user to server conn vector
-void Irc::AddUser(pollfd* poll_fd)
+void Irc::AddUser(pollfd poll_fd)
 {
-	conns_.insert(std::pair<int, User>(poll_fd->fd, User(poll_fd)));
-	std::cout << "Irc Adduser fd: " << poll_fd->fd << std::endl;
+	conns_.insert(std::pair<int, User>(poll_fd.fd, User(poll_fd)));
+	std::cout << "Irc Adduser fd: " << poll_fd.fd << std::endl;
 }
 
 //returns -1 when no user found
-int Irc::GetUserFd(std::string& nickname)
+int Irc::GetUserFd(std::string nickname)
 {
-	for(conn_iterator it = conns_.begin(); it != conns_.end(); ++it)
+	for(std::map<int, User>::iterator it = conns_.begin(); it != conns_.end(); ++it)
 	{
 		if (nickname == it->second.GetNickname())
 			return(it->first);
@@ -101,9 +101,9 @@ int Irc::GetUserFd(std::string& nickname)
 }
 
 // returns user* if user is on server, NULL if not
-User* Irc::GetUserHandle(std::string& nickname)
+User* Irc::GetUserHandle(std::string nickname)
 {
-	for(conn_iterator it = conns_.begin(); it != conns_.end(); ++it)
+	for(std::map<int, User>::iterator it = conns_.begin(); it != conns_.end(); ++it)
 	{
 		if (nickname == it->second.GetNickname())
 			return &(it->second);
@@ -125,7 +125,7 @@ void Irc::DistributeMsg(std::vector<std::string> names, std::string msg, User* u
 	{
 		if (SendPrivateMsg(*it, msg) != -1)
 			; //inefficient because of string copying
-		else 
+		else
 		{
 			Channel* channel = GetChannel(*it);
 			if (channel != NULL && channel->IsUserRegistered(user))
@@ -179,7 +179,7 @@ void	Irc::EmptyDeleteCollector()
 
 void	Irc::DeleteUserFromChannels(User *user)
 {
-	for(channel_iterator it = channels_.begin(); it != channels_.end(); ++it)
+	for(std::map<std::string, Channel>::iterator it = channels_.begin(); it != channels_.end(); ++it)
 	{
 		it->second.DeregisterUser(user);
 	}

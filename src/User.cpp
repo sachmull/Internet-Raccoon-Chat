@@ -5,7 +5,7 @@
 
 
 /* =================			Constructor/Deconstructor			================= */
-User::User(pollfd* poll_fd) : client_closed_(false), is_authenticated_(false)
+User::User(pollfd poll_fd) : client_closed_(false), is_authenticated_(false)
 {
 	socket_ = poll_fd;
 	input_buff_.reserve(512);
@@ -25,9 +25,13 @@ bool	User::Recv()
 	ssize_t		c_received;
 
 
-	c_received = recv(socket_->fd, &buff, 512, 0);
+	c_received = recv(socket_.fd, &buff, 512, 0);
 	if (c_received == -1)
-		input_buff_.clear();
+	{
+		// input_buff_.clear();
+		std::cout << "errno recv: " << errno << std::endl;
+		return false;
+	}
 	else if (c_received == 0 && client_closed_)
 		User::ClosedConnection();
 	else 
@@ -63,7 +67,7 @@ void	User::Send()
 {
 	if (output_buff_.empty())
 		return ;
-	int bytesRead = send(socket_->fd, static_cast<char*>(output_buff_.data()), output_buff_.size(), 0);
+	int bytesRead = send(socket_.fd, static_cast<char*>(output_buff_.data()), output_buff_.size(), 0);
 	if( bytesRead > 0)
 		output_buff_.erase(output_buff_.begin(), output_buff_.begin()+ bytesRead);
 	else
@@ -82,8 +86,8 @@ void	User::ClosedConnection()
 {
 	std::cout << "closed connection: " << GetNickname() << std::cout;
 	Irc::DeleteUserFromChannels(this);
-	Irc::DeleteCollector(this->socket_->fd);
-	Server::ErasePollFd(socket_->fd);
+	Irc::DeleteCollector(this->socket_.fd);
+	Server::ErasePollFd(socket_.fd);
 }
 
 void	User::Error()
@@ -103,7 +107,7 @@ void	User::SendMessage(std::vector<std::string>& names, std::string& msg)
 void	User::ConnectToChannel(std::string channel_name)
 {
 	try{
-	Channel* channel = Irc::GetChannel(channel_name);
+	Channel* channel = Irc::GetChannel(channel_name); //EVERY GET CHANNEL CREATES NEW CHANNL! CHANGE!
 	if (channel == NULL)
 		return ;
 	channel->RegisterUser(this); //make it for multiple channels

@@ -18,8 +18,8 @@ bool	Channel::RegisterUser(User* user)
 		return false;
 	if (IsUserRegistered(user))
 		return true;
-	if ((mode_flags_ & MODE_INVITE_ONLY) && !IsUserInvited(user))
-		return false; //not invited error
+	// if ((mode_flags_ & MODE_INVITE_ONLY) && !IsUserInvited(user))
+	// 	return false; //not invited error
 	std::vector<User*>::iterator it = registered_users_.begin();
 	for(; it != registered_users_.end(); ++it)
 	{
@@ -103,6 +103,11 @@ bool	Channel::InviteUser(User* new_user, User* commanding_user)
 	if (new_user == NULL ||  IsOperator(commanding_user) == false)
 		return false;
 	invited_users_.push_back(new_user);
+	std::cout << new_user << " is newly invited:" << new_user->GetNickname() << std::endl;
+	for(std::vector<User*>::iterator it = invited_users_.begin(); it != invited_users_.end(); ++it)
+	{
+		std::cout << *it << " is invited:" << (*it)->GetNickname() << std::endl;
+	}
 	return true;
 }
 

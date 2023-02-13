@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
 	if (port <= 0)
 		std::cout << "./ircserv [port > 0] [password]" << std::endl;
 	try{
-		Server Serv(port, 0, argv[2]);
+		Server Serv(port, 0, "test");
 
 		while(1)
 		{
