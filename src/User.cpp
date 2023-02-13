@@ -2,6 +2,7 @@
 #include <Server.hpp>
 #include <sstream>
 #include <MsgParser.hpp>
+#include <MsgGeneration.hpp>
 
 
 /* =================			Constructor/Deconstructor			================= */
@@ -132,7 +133,8 @@ void	User::SetNickname(std::string nickname)
 	//protect against double nicknames
 	if (Irc::IsNicknameUsed(nickname) == true)
 	{
-		WriteOutputBuff("nickname already in use\n");
+		// WriteOutputBuff("nickname already in use\n");
+		WriteOutputBuff(err_nickname_in_use(nickname));
 		return ;
 	}
 	std::cout << "set nickname: " << nickname << std::endl;

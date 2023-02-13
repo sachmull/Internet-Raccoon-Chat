@@ -1,4 +1,5 @@
 #include <MsgParser.hpp>
+#include <MsgGeneration.hpp>
 #include <Debug.hpp>
 
 
@@ -197,10 +198,10 @@ void	Executor::execute(Message& msg, User& user) {
 	 	if (msg.command == PASS)
 		{
 			if(user.Authenticate(msg.params[0][0]) == false)
-				user.WriteOutputBuff("wrong password\n");
+				user.WriteOutputBuff(err_passwd_mismatch());
 		}
 		else
-			user.WriteOutputBuff("server password needed\n");
+			user.WriteOutputBuff(err_passwd_mismatch());
 		return ;
 	}
 	if (msg.command == JOIN) {
