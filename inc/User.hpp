@@ -43,13 +43,14 @@ class User
 		void	SetNickname(std::string nickname);
 		void	SetUsername(std::string username);
 		bool	Authenticate(std::string password);
+		void	GetTopic(std::string channel_name);
 
 /* =================			Operator Operations			================= */
 
 		void	SetMode(std::string channel_name, std::string mode); //invite only
 		void	InviteUser(std::string channel_name, std::string nickname);
 		void	KickUser(std::string channel_name, std::string nickname);
-		// void	ChangeTopic(std::string new_topic);
+		void	SetTopic(std::string channel_name, std::string new_topic);
 
 /* =================				Getter				================= */
 		const std::string&	GetNickname() const;

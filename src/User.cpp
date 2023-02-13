@@ -167,6 +167,10 @@ void	User::SetMode(std::string channel_name, std::string mode) //invite only
 		channel->AddMode(MODE_INVITE_ONLY, this);
 	else if (mode == "-i")
 		channel->RemoveMode(MODE_INVITE_ONLY, this);
+	else if (mode == "+t")
+		channel->AddMode(MODE_TOPIC, this);
+	else if (mode == "it")
+		channel->RemoveMode(MODE_TOPIC, this);
 	else
 		WriteOutputBuff("mode: wrong input");
 }
@@ -190,15 +194,21 @@ void	User::KickUser(std::string channel_name, std::string nickname)
 	channel->KickUser(Irc::GetUserHandle(nickname), this);
 }
 
-// void	User::ChangeTopic(std::string new_topic)
-// {
-// 	if (channel == NULL)
-// {
-// 	std::cout << "no channel or is operator: " << is_operator_ << std::endl;
-// 		return ;
-// }
+void	User::GetTopic(std::string channel_name)
+{
+	Channel* channel = Irc::GetChannel(channel_name);
+	if (channel == NULL)
+		return ;
+	channel->GetTopic(this);
+}
 
-// }
+void	User::SetTopic(std::string channel_name, std::string new_topic)
+{
+	Channel* channel = Irc::GetChannel(channel_name);
+	if (channel == NULL)
+		return ;
+	channel->SetTopic(new_topic, this);
+}
 
 
 /* =================				Getters				================= */
