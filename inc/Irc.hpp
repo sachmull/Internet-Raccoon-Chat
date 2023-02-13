@@ -60,6 +60,7 @@ class Irc
 		static void		AddUser(pollfd poll_fd);
 		static int		GetUserFd(std::string& nickname);
 		static User*	GetUserHandle(std::string& nickname);
+		static bool		IsNicknameUsed(std::string& nickname);
 
 /* =================			Irc Events			================= */
 		static void GetReady();

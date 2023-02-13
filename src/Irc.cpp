@@ -136,6 +136,17 @@ void Irc::DistributeMsg(std::vector<std::string> names, std::string msg, User* u
 	}
 }
 
+bool	Irc::IsNicknameUsed(std::string& nickname)
+{
+	for(conn_iterator it = conns_.begin(); it != conns_.end(); ++it)
+	{
+		if (it->second.GetNickname() == nickname)
+			return true;
+	}
+	return false;
+}
+
+
 /* =================			GarbageCollector			================= */
 
 

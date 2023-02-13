@@ -117,6 +117,7 @@ void	Server::ErasePollFd(int fd)
 	{
 		if(it->fd == fd)
 		{
+			close(it->fd);
 			poll_fds_.erase(it);
 			break ;
 		}

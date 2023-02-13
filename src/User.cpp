@@ -130,6 +130,11 @@ void	User::ExitServer()
 void	User::SetNickname(std::string nickname)
 {
 	//protect against double nicknames
+	if (Irc::IsNicknameUsed(nickname) == true)
+	{
+		WriteOutputBuff("nickname already in use\n");
+		return ;
+	}
 	std::cout << "set nickname: " << nickname << std::endl;
 	nickname_ = nickname;
 }

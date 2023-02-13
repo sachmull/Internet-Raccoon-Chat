@@ -192,11 +192,20 @@ void	MsgParser::skip_whitespace() {
 
 // Executor
 void	Executor::execute(Message& msg, User& user) {
+	if (user.IsAuthenticated() == false)
+	{
+	 	if (msg.command == PASS)
+		{
+			if(user.Authenticate(msg.params[0][0]) != true)
+				user.ClosedClient();
+		}
+		else
+			user.WriteOutputBuff("server password needed");
+		return ;
+	}
 	if (msg.command == JOIN) {
 		PRINTLN("JOIN");
 		user.ConnectToChannel(msg.params[0][0]);
-	} else if (msg.command == PASS) {
-		user.Authenticate(msg.params[0][0]);
 	} else if (msg.command == NICK) {
 		PRINTLN("NICK");
 		user.SetNickname(msg.params[0][0]);
