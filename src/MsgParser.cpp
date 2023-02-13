@@ -196,11 +196,11 @@ void	Executor::execute(Message& msg, User& user) {
 	{
 	 	if (msg.command == PASS)
 		{
-			if(user.Authenticate(msg.params[0][0]) != true)
-				user.ClosedClient();
+			if(user.Authenticate(msg.params[0][0]) == false)
+				user.WriteOutputBuff("wrong password\n");
 		}
 		else
-			user.WriteOutputBuff("server password needed");
+			user.WriteOutputBuff("server password needed\n");
 		return ;
 	}
 	if (msg.command == JOIN) {
