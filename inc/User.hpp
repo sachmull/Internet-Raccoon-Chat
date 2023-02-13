@@ -21,10 +21,10 @@ class User
 		bool				is_authenticated_;
 		std::string			username_;
 		std::string			nickname_;
-		pollfd*				socket_;
+		pollfd				socket_;
 
 	public:
-		User(pollfd* poll_fd);
+		User(pollfd poll_fd);
 		~User();
 
 		bool	Recv(); // gets message from client -> reads in input buff

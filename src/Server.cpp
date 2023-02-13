@@ -144,5 +144,5 @@ void Server::AddConnection(struct pollfd poll_fd, struct sockaddr addr)
 {
 	(void)addr;
 	poll_fds_.push_back(poll_fd);
-	Irc::AddUser(&poll_fds_.back());
+	Irc::AddUser(poll_fds_.back());
 }
