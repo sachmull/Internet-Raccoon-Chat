@@ -214,7 +214,7 @@ void	Executor::execute(Message& msg, User& user) {
 		PRINTLN("USER");
 		user.SetUsername(msg.params[0][0]);
 	} else if (msg.command == PRIVMSG) {
-		user.SendMessage(msg.params[0], msg.params[1][0]);
+			user.SendMessage(msg.params[0], msg.params[1][0]);
 	} else if (msg.command == OPER) {
 		TODO("OPER");
 	} else if (msg.command == QUIT) {

@@ -1,5 +1,6 @@
 #include <Irc.hpp>
 #include <iostream>
+#include <MsgGeneration.hpp>
 #include <Debug.hpp>
 // #include <Server.hpp>
 
@@ -136,6 +137,10 @@ void Irc::DistributeMsg(std::vector<std::string> names, std::string msg, User* u
 			Channel* channel = GetChannel(*it);
 			if (channel != NULL && channel->IsUserRegistered(user))
 				channel->BroadcastMsg(msg);
+			else if (channel == NULL) {
+				PRINTLN("no such nickname");
+				user->WriteOutputBuff(err_no_such_nick(user->GetNickname(), *it));
+			}
 		}
 	}
 }

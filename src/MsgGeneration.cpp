@@ -17,8 +17,8 @@ std::string	err_cannot_send_to_chan(std::string channel) {
 	return "404 " + channel + " :Cannot send to channel\r\n";
 }
 
-std::string	err_no_text_to_send() {
-	return "412 :No text to send\r\n";
+std::string	err_no_text_to_send(std::string nickname) {
+	return ":raccoon.chat 412 " + nickname + " :No text to send\r\n";
 }
 
 std::string	err_nickname_in_use(std::string nickname) {
@@ -27,4 +27,8 @@ std::string	err_nickname_in_use(std::string nickname) {
 
 std::string	err_passwd_mismatch() {
 	return ":raccoon.chat 464 user :Password incorrect\r\n";
+}
+
+std::string	err_no_such_nick(std::string user, std::string nickname) {
+	return ":raccon.chat 401 " + user + " " + nickname + " :No such nick/channel\r\n";
 }
