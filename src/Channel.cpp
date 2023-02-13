@@ -8,7 +8,6 @@ Channel::Channel(std::string name) : name_(name), topic_(""),  mode_flags_(0), g
 
 Channel::~Channel()
 {
-	
 }
 
 bool	Channel::RegisterUser(User* user)
@@ -59,7 +58,7 @@ bool	Channel::DeregisterUser(User* user)
 	}
 	else
 		gets_deleted = false;
-	std::cout << user->GetNickname() << " left channel" << std::endl;
+	std::cout << user->GetNickname() << " left channeln" << std::endl;
 	return true;
 }
 
@@ -123,7 +122,7 @@ bool	Channel::KickUser(User* kick_user, User* commanding_user)
 	if (kick_user == NULL || IsOperator(commanding_user) == false)
 		return false;
 	DeregisterUser(kick_user);
-	kick_user->WriteOutputBuff("you got kicked\n");
+	kick_user->WriteOutputBuff("you got kicked");
 	return true;
 }
 
