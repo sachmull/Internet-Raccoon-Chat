@@ -73,7 +73,7 @@ void	User::Send()
 
 void	User::ClosedClient()
 {
-	std::cout << "closed client: " << GetNickname() << std::cout;
+	std::cout << "closed client: " << GetNickname() << std::endl;
 	// client_closed_ = true;
 	// User::Recv();
 	ClosedConnection();
@@ -81,10 +81,9 @@ void	User::ClosedClient()
 
 void	User::ClosedConnection()
 {
-	std::cout << "closed connection: " << GetNickname() << std::cout;
+	std::cout << "closed connection: " << GetNickname() << std::endl;
 	Irc::DeleteUserFromChannels(this);
 	Irc::DeleteCollector(this->socket_.fd);
-	Server::ErasePollFd(socket_.fd);
 }
 
 void	User::Error()

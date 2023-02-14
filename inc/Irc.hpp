@@ -15,6 +15,7 @@
 #include <Channel.hpp>
 // #include <User.hpp>
 
+// class Server;
 /**
  * IRC handling Channels
 **/

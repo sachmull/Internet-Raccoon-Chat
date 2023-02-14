@@ -9,7 +9,6 @@ Channel::Channel(std::string name) : name_(name), topic_(""),  mode_flags_(0), g
 
 Channel::~Channel()
 {
-	
 }
 
 bool	Channel::RegisterUser(User* user)
@@ -60,7 +59,7 @@ bool	Channel::DeregisterUser(User* user)
 	}
 	else
 		gets_deleted = false;
-	std::cout << user->GetNickname() << " left channel" << std::endl;
+	std::cout << user->GetNickname() << " left channeln" << std::endl;
 	return true;
 }
 

@@ -2,7 +2,7 @@
 #include <iostream>
 #include <MsgGeneration.hpp>
 #include <Debug.hpp>
-// #include <Server.hpp>
+#include <Server.hpp>
 
 std::map<std::string, Channel>		Irc::channels_;
 std::map<int, User>					Irc::conns_;
@@ -194,6 +194,7 @@ void	Irc::EmptyDeleteCollector()
 {
 	for(std::vector<int>::iterator it = conns_to_delete_.begin(); it != conns_to_delete_.end(); ++it)
 	{
+		Server::ErasePollFd(*it);
 		conns_.erase(*it);
 	}
 	conns_to_delete_.clear();
