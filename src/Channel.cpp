@@ -48,20 +48,17 @@ bool	Channel::DeregisterUser(User* user)
 	if (it == registered_users_.end())
 		return false;
 	registered_users_.erase(it);
-	if (user == operator_ && !registered_users_.empty())	//set new operator if user was operator
+	if (user == operator_ && !registered_users_.empty())
 	{
 		// only if no one is operator anymore
 		operator_ = registered_users_.at(0); //sets new operator
 		registered_users_.at(0)->WriteOutputBuff("you are now operator\r\n");
 	}
 	if (registered_users_.empty())
-	{
-			std::cout << "channel set to be deleted: "<< GetName() << std::endl;
 		gets_deleted = true;
-	}
 	else
 		gets_deleted = false;
-	std::cout << user->GetNickname() << " left channeln" << std::endl;
+	std::cout << user->GetNickname() << " left channel: " << GetName() << std::endl;
 	return true;
 }
 
@@ -76,10 +73,7 @@ bool	Channel::IsUserRegistered(User* user)
 	for(std::vector<User*>::iterator it = registered_users_.begin(); it != registered_users_.end(); ++it)
 	{
 		if (*it == user)
-		{
-			// user->WriteOutputBuff(user->GetNickname() + "already in channel" + name_ + "\n");
 			return true;
-		}
 	}
 	return false;
 }
@@ -145,7 +139,6 @@ bool	Channel::KickUser(User* kick_user, User* commanding_user)
 	if (kick_user == NULL || IsOperator(commanding_user) == false)
 		return false;
 	DeregisterUser(kick_user);
-	// kick_user->WriteOutputBuff("you got kicked\n");
 	kick_user->WriteOutputBuff(gen_kick(commanding_user->GetNickname(), kick_user->GetNickname(), name_, "we dont need a reason"));
 	return true;
 }
@@ -155,7 +148,6 @@ void	Channel::SetTopic(std::string& new_topic, User* commanding_user)
 	if (!(mode_flags_ & MODE_TOPIC))
 		commanding_user->WriteOutputBuff("channel is in no topic mode\n");
 	else if (IsOperator(commanding_user) == true) {
-		// commanding_user->WriteOutputBuff("changed topic to:" + new_topic + "\n");
 		topic_ = new_topic;
 		for(std::vector<User*>::iterator it = registered_users_.begin(); it != registered_users_.end(); ++it)
 		{

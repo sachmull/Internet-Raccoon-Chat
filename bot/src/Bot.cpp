@@ -74,6 +74,8 @@ void	Bot::Recv()
 	name = GetNameFromInput();
 	if (name != "raccoon.chat")
 		output_buff_.insert(output_buff_.begin(), name.begin(), name.end());
+	else
+		exit(0);
 	input_buff_.clear();
 }
 

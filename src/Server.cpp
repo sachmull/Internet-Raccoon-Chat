@@ -69,16 +69,16 @@ void	Server::PollEventHandler()
 		else if (poll_fds_.at(idx).revents != 0)
 		{
 			--poll_events_ready;
-			if (poll_fds_.at(idx).revents & POLLIN) // there is data to read
+			if (poll_fds_.at(idx).revents & POLLIN)
 				irc_.Recv(poll_fds_.at(idx).fd);
 			if (poll_fds_.at(idx).revents & POLLOUT)
 				irc_.Send(poll_fds_.at(idx).fd);
 			if (poll_fds_.at(idx).revents & POLLERR)
 				irc_.Error(poll_fds_.at(idx).fd);
 			if (poll_fds_.at(idx).revents & POLLHUP)
-				irc_.ClosedClient(poll_fds_.at(idx).fd); // recv should call close if pipe empty
+				irc_.ClosedClient(poll_fds_.at(idx).fd);
 			if (poll_fds_.at(idx).revents & POLLNVAL)
-				irc_.ClosedConnection(poll_fds_.at(idx).fd); // fd not open
+				irc_.ClosedConnection(poll_fds_.at(idx).fd);
 		}
 		} catch (std::exception& e) { std::cerr << "irc: " << e.what() << '\n'; }
 	}
