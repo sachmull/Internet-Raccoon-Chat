@@ -25,20 +25,18 @@ class Bot
 		Bot(int port);
 		~Bot();
 
+/* =================			Initialization			================= */
 		void	InitBot(std::string server_password);
 
 /* =================			IO			================= */
-
 		void	Recv();
 		void	SendTime();
 
 /* =================			OutputBuffWriter			================= */
-
 		void				GetTime();
 		std::string			GetNameFromInput();
 
-
-
+/* =================			Private Variables			================= */
 	private:
 		int					fd_;
 		std::vector<char>	input_buff_;

@@ -11,6 +11,8 @@ Channel::~Channel()
 {
 }
 
+/* =================			Channel Operations			================= */
+
 bool	Channel::RegisterUser(User* user)
 {
 	try{
@@ -63,6 +65,27 @@ bool	Channel::DeregisterUser(User* user)
 	return true;
 }
 
+// returns channel name
+std::string	Channel::GetName()
+{
+	return name_;
+}
+
+bool	Channel::IsUserRegistered(User* user)
+{
+	for(std::vector<User*>::iterator it = registered_users_.begin(); it != registered_users_.end(); ++it)
+	{
+		if (*it == user)
+		{
+			// user->WriteOutputBuff(user->GetNickname() + "already in channel" + name_ + "\n");
+			return true;
+		}
+	}
+	return false;
+}
+
+/* =================			User Operations			================= */
+
 // broadcasts given msg to any user registered on the channel
 void	Channel::BroadcastMsg(User& user, std::string msg)
 {
@@ -72,11 +95,18 @@ void	Channel::BroadcastMsg(User& user, std::string msg)
 	}
 }
 
-// returns channel name
-std::string	Channel::GetName()
+
+void	Channel::GetTopic(User* commanding_user)
 {
-	return name_;
+	if (!(mode_flags_ & MODE_TOPIC)) {
+		commanding_user->WriteOutputBuff(gen_no_topic(name_));
+	}
+	else {
+		commanding_user->WriteOutputBuff(gen_get_topic(name_, topic_));
+	}
 }
+
+/* =================			Operator Operations			================= */
 
 // sets flag for channel mode
 void	Channel::AddMode(size_t flag, User* commanding_user)
@@ -136,18 +166,7 @@ void	Channel::SetTopic(std::string& new_topic, User* commanding_user)
 		commanding_user->WriteOutputBuff("you are not operator\r\n");
 }
 
-void	Channel::GetTopic(User* commanding_user)
-{
-	if (!(mode_flags_ & MODE_TOPIC)) {
-		// commanding_user->WriteOutputBuff("channel is in no topic mode\n");
-		commanding_user->WriteOutputBuff(gen_no_topic(name_));
-	}
-	else {
-		commanding_user->WriteOutputBuff(gen_get_topic(name_, topic_));
-	}
-		// commanding_user->WriteOutputBuff(topic_ + "\n");
-}
-
+/* =================			Private Helpers			================= */
 
 // returns true if a user is in the invited vector
 bool	Channel::IsUserInvited(User* user)
@@ -156,19 +175,6 @@ bool	Channel::IsUserInvited(User* user)
 	{
 		if (*it == user)
 			return true;
-	}
-	return false;
-}
-
-bool	Channel::IsUserRegistered(User* user)
-{
-	for(std::vector<User*>::iterator it = registered_users_.begin(); it != registered_users_.end(); ++it)
-	{
-		if (*it == user)
-		{
-			// user->WriteOutputBuff(user->GetNickname() + "already in channel" + name_ + "\n");
-			return true;
-		}
 	}
 	return false;
 }

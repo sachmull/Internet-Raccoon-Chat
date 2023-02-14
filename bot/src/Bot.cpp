@@ -1,9 +1,9 @@
 #include "./Bot.hpp"
 
+// trys to establish connection to given port, 5 retrys until quit
 Bot::Bot(int port)
 {
 	int	count = 0;
-	// int	error;
 	struct	sockaddr_in servaddr;
 
 	fd_ = socket(AF_INET, SOCK_STREAM, 0);
@@ -32,6 +32,9 @@ Bot::~Bot()
 	close(fd_);
 }
 
+/* =================			Initialization			================= */
+
+//	sends connected server given password + username(bot) + nickname(bot)
 void	Bot::InitBot(std::string server_password)
 {
 	std::string	str = "PASS " + server_password + "\r\n";
@@ -44,7 +47,7 @@ void	Bot::InitBot(std::string server_password)
 
 /* =================			IO			================= */
 
-
+//	recv msg from server, trys to get username in format <:username > and write it to output buff
 void	Bot::Recv()
 {
 	char				buff[512];
@@ -74,6 +77,7 @@ void	Bot::Recv()
 	input_buff_.clear();
 }
 
+//	when name is in output buff, it sends server localtime as PRIVMSG to given name
 void	Bot::SendTime()
 {
 	if (output_buff_.empty())
@@ -93,6 +97,7 @@ void	Bot::SendTime()
 
 /* =================			OutputBuffWriter			================= */
 
+//	gets localtime and writes it to output buff end
 void	Bot::GetTime()
 {
 	time_t		now = time(0);
@@ -106,6 +111,7 @@ void	Bot::GetTime()
 	output_buff_.insert(output_buff_.end(), str.begin(), str.end());
 }
 
+//	gets username in format <:username > and writes it to output buff
 std::string	Bot::GetNameFromInput()
 {
 	std::string	str;

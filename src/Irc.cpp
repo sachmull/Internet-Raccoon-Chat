@@ -155,11 +155,6 @@ bool	Irc::IsNicknameUsed(std::string& nickname)
 	return false;
 }
 
-
-/* =================			GarbageCollector			================= */
-
-
-
 /* =================			Password			================= */
 
 bool Irc::CompareServerPassword(std::string password)

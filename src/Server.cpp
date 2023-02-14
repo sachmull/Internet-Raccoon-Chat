@@ -44,6 +44,8 @@ Server::~Server()
 	
 }
 
+/* =================				Server Actions				================= */
+
 void	Server::PollEventHandler()
 {
 	ResetPollFdFlags();
@@ -82,6 +84,21 @@ void	Server::PollEventHandler()
 	}
 }
 
+void	Server::ErasePollFd(int fd)
+{
+	for(std::vector<pollfd>::iterator it = poll_fds_.begin(); it != poll_fds_.end(); ++it)
+	{
+		if(it->fd == fd)
+		{
+			close(it->fd);
+			poll_fds_.erase(it);
+			break ;
+		}
+	}
+}
+
+/* =================				Private Helpers				================= */
+
 void	Server::ResetPollFdFlags()
 {
 	for(std::vector<pollfd>::iterator it = poll_fds_.begin(); it != poll_fds_.end(); ++it)
@@ -114,17 +131,3 @@ void Server::AddConnection(struct pollfd poll_fd, struct sockaddr addr)
 	poll_fds_.push_back(poll_fd);
 	Irc::AddUser(poll_fds_.back());
 }
-
-void	Server::ErasePollFd(int fd)
-{
-	for(std::vector<pollfd>::iterator it = poll_fds_.begin(); it != poll_fds_.end(); ++it)
-	{
-		if(it->fd == fd)
-		{
-			close(it->fd);
-			poll_fds_.erase(it);
-			break ;
-		}
-	}
-}
-

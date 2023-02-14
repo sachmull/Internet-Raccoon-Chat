@@ -17,22 +17,10 @@
 
 // class Server;
 /**
- * IRC handling Channels
+ * IRC manages distribution of everythin between channels and users
 **/
 class Irc
 {
-	private:
-		typedef std::map<std::string, Channel>::iterator	channel_iterator;
-		typedef std::map<int, User>::iterator				conn_iterator;
-
-	private:
-		static std::map<std::string, Channel>		channels_;
-		static std::map<int, User>					conns_;
-		static std::vector<int>						conns_to_delete_;
-		static std::vector<Channel*>				channels_to_delete_;
-		static std::string							password_;
-
-
 	public:
 		Irc();
 		~Irc();
@@ -52,9 +40,6 @@ class Irc
 		static void		DeleteUnusedChannels();
 		static Channel*	GetChannel(std::string channel_name);
 		static Channel* CreateChannel(std::string channel_name);
-
-
-
 
 /* =================			User Operations			================= */
 		static int		SendPrivateMsg(std::string from, std::string nickname, std::string msg);
@@ -78,6 +63,17 @@ class Irc
 		static void EmptyDeleteCollector();
 		static void	DeleteUserFromChannels(User* user);
 
+/* =================			Private Typedefs			================= */
 	private:
+		typedef std::map<std::string, Channel>::iterator	channel_iterator;
+		typedef std::map<int, User>::iterator				conn_iterator;
+
+/* =================			Private Variables			================= */
+	private:
+		static std::map<std::string, Channel>		channels_;
+		static std::map<int, User>					conns_;
+		static std::vector<int>						conns_to_delete_;
+		static std::vector<Channel*>				channels_to_delete_;
+		static std::string							password_;
 };
 
