@@ -18,5 +18,6 @@ std::string	err_no_such_nick(std::string user, std::string nickname);
 std::string	err_need_more_params(std::string user, std::string command);
 std::string	err_not_on_channel(std::string user, std::string channel);
 std::string	err_invite_only_chan(std::string channel);
+std::string	err_no_privileges(std::string user);
 
 #endif

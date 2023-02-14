@@ -63,3 +63,8 @@ std::string	err_not_on_channel(std::string user, std::string channel) {
 std::string	err_invite_only_chan(std::string channel) {
 	return ":raccoon.chat 473 " + channel + " :Cannot join channel (+i)\r\n";
 }
+
+std::string	err_no_privileges(std::string user)	{
+	(void)user;
+	return ":raccoon.chat 481 :Permission Denied- You're not an IRC operator\r\n";
+}

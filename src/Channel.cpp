@@ -182,6 +182,7 @@ bool	Channel::IsOperator(User* user)
 	if (user != operator_)
 	{
 		// user->WriteOutputBuff("you are not operator\r\n");
+		user->WriteOutputBuff(err_no_privileges(user->GetNickname()));
 		return false;
 	}
 	return true;
