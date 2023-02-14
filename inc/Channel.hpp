@@ -42,7 +42,6 @@ class Channel
 		void		SetTopic(std::string& new_topic, User* commanding_user);
 		bool		InviteUser(User* new_user, User* commanding_user);
 
-
 /* =================			Private Helpers			================= */
 	private:
 		bool		IsOperator(User* user);

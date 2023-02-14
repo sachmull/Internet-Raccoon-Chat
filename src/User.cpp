@@ -14,8 +14,6 @@ User::User(pollfd poll_fd) : client_closed_(false), is_registered_(false), is_au
 
 User::~User()
 {
-	// Server::ErasePollFd(socket_);
-	std::cout << "user deconstructor called" << std::endl;
 }
 
 
@@ -39,24 +37,17 @@ bool	User::Recv()
 			std::cout << *it;
 		std::cout << std::endl;
 	}
-	// MiniParse();
 	MsgParser	parser;
 	Message		msg;
 	Executor	exe;
 	std::string	input(input_buff_.begin(), input_buff_.end());
 	while (input.find('\n') != std::string::npos) {
-		// outputs the current line that will be fed into the parser
-		// std::cout << "to_parse:" << input.substr(0, input.find('\n')) << std::endl;
 		if ((msg = parser.parse(input.substr(0, input.find('\n')))).is_complete) {
-			// std::cout << msg;
 			exe.execute(msg, *this);
 		}
 		input = input.substr(input.find('\n') + 1, input.length());
 	}
 	input_buff_.clear();
-
-	// std::cout << "nickname: "<< nickname_ << std::endl;
-	// output_buff_.insert(output_buff_.begin(), input_buff_.begin(), input_buff_.end());
 	return (true);
 }
 
@@ -74,9 +65,8 @@ void	User::Send()
 void	User::ClosedClient()
 {
 	std::cout << "closed client: " << GetNickname() << std::endl;
-	// client_closed_ = true;
-	// User::Recv();
-	ClosedConnection();
+	client_closed_ = true;
+	User::Recv();
 }
 
 void	User::ClosedConnection()
@@ -88,10 +78,8 @@ void	User::ClosedConnection()
 
 void	User::Error()
 {
+	std::cout << "some error in connection to client orccured: " << GetNickname() << std::endl;
 }
-
-
-
 
 /* =================			User Operations			================= */
 
