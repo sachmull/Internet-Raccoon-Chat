@@ -108,7 +108,6 @@ void	User::ConnectToChannel(std::string channel_name)
 		if (channel == NULL)
 			return ;
 		channel->RegisterUser(this); //make it for multiple channels
-		GetTopic(channel_name);
 		} catch (std::exception& e) { std::cerr << "co channel: " << e.what() << '\n'; }
 	}
 }

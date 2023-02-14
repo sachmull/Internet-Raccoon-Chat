@@ -59,3 +59,7 @@ std::string	err_need_more_params(std::string user, std::string command) {
 std::string	err_not_on_channel(std::string user, std::string channel) {
 	return ":raccoon.chat 442 " + user + " " + channel + " :You're not on that channel\r\n";
 }
+
+std::string	err_invite_only_chan(std::string channel) {
+	return ":raccoon.chat 473 " + channel + " :Cannot join channel (+i)\r\n";
+}

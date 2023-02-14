@@ -20,8 +20,10 @@ bool	Channel::RegisterUser(User* user)
 		return false;
 	if (IsUserRegistered(user))
 		return true;
-	if ((mode_flags_ & MODE_INVITE_ONLY) && !IsUserInvited(user))
+	if ((mode_flags_ & MODE_INVITE_ONLY) && !IsUserInvited(user)) {
+		user->WriteOutputBuff(err_invite_only_chan(name_));
 		return false; //not invited error
+	}
 	std::vector<User*>::iterator it = registered_users_.begin();
 	for(; it != registered_users_.end(); ++it)
 	{
@@ -33,6 +35,7 @@ bool	Channel::RegisterUser(User* user)
 		operator_ = user;
 	} catch (std::exception& e) { std::cerr << "exception regi: " << e.what() << '\n'; }
 	std::cout << user->GetNickname() << " joined channel: " << GetName() << std::endl;
+	GetTopic(user);
 	return true;
 }
 
@@ -152,8 +155,10 @@ bool	Channel::KickUser(User* kick_user, User* commanding_user)
 
 void	Channel::SetTopic(std::string& new_topic, User* commanding_user)
 {
-	if (!(mode_flags_ & MODE_TOPIC))
-		commanding_user->WriteOutputBuff("channel is in no topic mode\n");
+	if (!(mode_flags_ & MODE_TOPIC)) {
+		
+		// commanding_user->WriteOutputBuff("channel is in no topic mode\n");
+	}
 	else if (IsOperator(commanding_user) == true) {
 		// commanding_user->WriteOutputBuff("changed topic to:" + new_topic + "\n");
 		topic_ = new_topic;
