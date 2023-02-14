@@ -27,6 +27,9 @@ std::string	gen_no_topic(std::string channel) {
 	return ":raccoon.chat 331 " + channel + " :No topic is set\r\n";
 }
 
+std::string	gen_now_operator(std::string user) {
+	return ":raccoon.chat 381 " + user + " :Your are now an IRC operator\r\n";
+}
 
 std::string	err_no_recipient(std::string command) {
 	return "411 :No recipient given (" + command + ")\r\n";
@@ -65,6 +68,5 @@ std::string	err_invite_only_chan(std::string channel) {
 }
 
 std::string	err_no_privileges(std::string user)	{
-	(void)user;
-	return ":raccoon.chat 481 :Permission Denied- You're not an IRC operator\r\n";
+	return ":raccoon.chat 481 " + user + " :Permission Denied- You're not an IRC operator\r\n";
 }

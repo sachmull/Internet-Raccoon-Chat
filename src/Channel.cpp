@@ -55,7 +55,7 @@ bool	Channel::DeregisterUser(User* user)
 	{
 		// only if no one is operator anymore
 		operator_ = registered_users_.at(0); //sets new operator
-		// registered_users_.at(0)->WriteOutputBuff("you are now operator\r\n");
+		registered_users_.at(0)->WriteOutputBuff(gen_now_operator(registered_users_.at(0)->GetNickname()));
 	}
 	if (registered_users_.empty())
 		gets_deleted = true;
@@ -160,7 +160,7 @@ void	Channel::SetTopic(std::string& new_topic, User* commanding_user)
 		}
 	}
 	else {
-		// commanding_user->WriteOutputBuff("you are not operator\r\n");
+		commanding_user->WriteOutputBuff(err_no_privileges(commanding_user->GetNickname()));
 	}
 }
 
@@ -181,7 +181,6 @@ bool	Channel::IsOperator(User* user)
 {
 	if (user != operator_)
 	{
-		// user->WriteOutputBuff("you are not operator\r\n");
 		user->WriteOutputBuff(err_no_privileges(user->GetNickname()));
 		return false;
 	}

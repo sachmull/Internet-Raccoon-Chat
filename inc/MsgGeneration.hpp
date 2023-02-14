@@ -9,6 +9,7 @@ std::string	gen_kick(std::string from, std::string to, std::string channel, std:
 std::string	gen_set_topic(std::string user, std::string channel, std::string topic);
 std::string	gen_get_topic(std::string channel, std::string topic);
 std::string	gen_no_topic(std::string channel);
+std::string	gen_now_operator(std::string user);
 
 std::string	err_no_recipient(std::string command);
 std::string	err_no_text_to_send(std::string nickname);
