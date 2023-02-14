@@ -259,6 +259,6 @@ void	Executor::execute(Message& msg, User& user) {
 	}
 	else
 	{
-		user.WriteOutputBuff("you are not authenticated\r\n");
+		// user.WriteOutputBuff("you are not authenticated\r\n");
 	}
 }

@@ -167,8 +167,9 @@ void	User::SetMode(std::string channel_name, std::string mode) //invite only
 		channel->AddMode(MODE_TOPIC, this);
 	else if (mode == "it")
 		channel->RemoveMode(MODE_TOPIC, this);
-	else
+	else {
 		WriteOutputBuff("mode: wrong input\n");
+	}
 }
 
 void	User::InviteUser(std::string channel_name, std::string nickname)
