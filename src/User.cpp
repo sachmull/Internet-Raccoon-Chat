@@ -238,40 +238,6 @@ int	User::WriteOutputBuff(std::string msg)
 
 /* =================				Testfunctions				================= */
 
-
-// void	User::MiniParse()
-// {
-// 	try{
-
-// 	std::string strmsg = "test msg\n";
-// 	std::vector<char> testmsg;
-// 	testmsg.insert(testmsg.begin(), strmsg.begin(), strmsg.end());
-// 	strmsg = "broadcasting yes yes\n";
-// 	std::vector<char> broadcastmsg;
-// 	broadcastmsg.insert(broadcastmsg.begin(), strmsg.begin(), strmsg.end());
-// 	std::string testchannel = "testchannel";
-// 	if (input_buff_.at(0) == '1')
-// 		nickname_ = VecToStr(input_buff_);
-// 	if (input_buff_.at(0) == '2') //send priv message
-// 		SendPrivateMessage(VecToStr(input_buff_), testmsg);
-// 	// if (input_buff_.at(0) == '3') //get channel
-// 	// 	WriteOutputBuff(channelname);
-// 	if (input_buff_.at(0) == '4') //create/join channel
-// 		ConnectToChannel("testchannel");
-// 	if (input_buff_.at(0) == '5') //disconnect
-// 		DisconnectFromChannel("testchannel");
-// 	if (input_buff_.at(0) == '6') //broadcast_message
-// 		BroadcastMessage("testchannel", broadcastmsg);
-// 	if (input_buff_.at(0) == '7') //sets to invite only
-// 		SetMode("testchannel");
-// 	if (input_buff_.at(0) == '8')
-// 		InviteUser("testchannel", VecToStr(input_buff_));
-// 	if (input_buff_.at(0) == '9')
-// 		KickUser("testchannel", VecToStr(input_buff_));
-// 	input_buff_.clear();
-// 	}catch (std::exception& e) { std::cerr << "miniparse: " << e.what() << '\n'; }
-// }
-
 std::string User::VecToStr(std::vector<char>& msg)
 {
 	std::ostringstream	stream;

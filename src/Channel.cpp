@@ -50,7 +50,7 @@ bool	Channel::DeregisterUser(User* user)
 	{
 		// only if no one is operator anymore
 		operator_ = registered_users_.at(0); //sets new operator
-		registered_users_.at(0)->WriteOutputBuff("you are now operator\n");
+		registered_users_.at(0)->WriteOutputBuff("you are now operator\r\n");
 	}
 	if (registered_users_.empty())
 	{
@@ -64,14 +64,6 @@ bool	Channel::DeregisterUser(User* user)
 }
 
 // broadcasts given msg to any user registered on the channel
-void	Channel::BroadcastMsg(std::vector<char> msg)
-{
-	for(std::vector<User*>::iterator it = registered_users_.begin(); it != registered_users_.end(); ++it)
-	{
-		(*it)->WriteOutputBuff(msg);
-	}
-}
-
 void	Channel::BroadcastMsg(User& user, std::string msg)
 {
 	for(std::vector<User*>::iterator it = registered_users_.begin(); it != registered_users_.end(); ++it)
@@ -141,7 +133,7 @@ void	Channel::SetTopic(std::string& new_topic, User* commanding_user)
 		}
 	}
 	else
-		commanding_user->WriteOutputBuff("you are not operator\n");
+		commanding_user->WriteOutputBuff("you are not operator\r\n");
 }
 
 void	Channel::GetTopic(User* commanding_user)
@@ -185,7 +177,7 @@ bool	Channel::IsOperator(User* user)
 {
 	if (user != operator_)
 	{
-		user->WriteOutputBuff("you are not operator\n");
+		user->WriteOutputBuff("you are not operator\r\n");
 		return false;
 	}
 	return true;

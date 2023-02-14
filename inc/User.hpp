@@ -63,11 +63,9 @@ class User
 		int		WriteOutputBuff(std::vector<char>& msg);
 		int		WriteOutputBuff(std::string msg);
 
-	private:
-
 /* =================				Testfunctions				================= */
-		// void	MiniParse();
 
+	private:
 		std::string VecToStr(std::vector<char>& msg);
 		std::vector<char> StrToVec(std::string s);
 
