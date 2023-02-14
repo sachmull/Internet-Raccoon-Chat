@@ -223,10 +223,6 @@ void	Executor::execute(Message& msg, User& user) {
 			PRINTLN("PRIVMSG");
 
 			user.SendMessage(msg.params[0], msg.params[1][0]);
-		} else if (msg.command == OPER) {
-			TODO("OPER");
-		} else if (msg.command == QUIT) {
-			std::cout << msg.params[0][0] << std::endl;
 		} else if (msg.command == KICK) {
 			if (msg.params.size() < 2) {
 				user.WriteOutputBuff(err_need_more_params(user.GetNickname(), "KICK"));
@@ -240,7 +236,11 @@ void	Executor::execute(Message& msg, User& user) {
 				user.WriteOutputBuff(err_need_more_params(user.GetNickname(), "MODE"));
 			}
 		} else if (msg.command == INVITE) {
-			user.InviteUser(msg.params[1][0], msg.params[0][0]);
+			if (msg.params.size() == 2) {
+				user.InviteUser(msg.params[1][0], msg.params[0][0]);
+			} else {
+				user.WriteOutputBuff(err_need_more_params(user.GetNickname(), "INVITE"));
+			}
 		} else if (msg.command == TOPIC) {
 			if (msg.params.size() == 1) {
 				PRINTLN("get Topic");
