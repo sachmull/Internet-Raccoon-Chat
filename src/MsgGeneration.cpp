@@ -20,7 +20,11 @@ std::string	gen_set_topic(std::string user, std::string channel, std::string top
 
 std::string	gen_get_topic(std::string channel, std::string topic) {
 	PRINTLN(topic);
-	return "332 " + channel + " :" + topic + "\r\n";
+	return ":raccoon.chat 332 " + channel + " :" + topic + "\r\n";
+}
+
+std::string	gen_no_topic(std::string channel) {
+	return ":raccoon.chat 331 " + channel + " :No topic is set\r\n";
 }
 
 

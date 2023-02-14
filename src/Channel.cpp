@@ -146,8 +146,10 @@ void	Channel::SetTopic(std::string& new_topic, User* commanding_user)
 
 void	Channel::GetTopic(User* commanding_user)
 {
-	if (!(mode_flags_ & MODE_TOPIC))
-		commanding_user->WriteOutputBuff("channel is in no topic mode\n");
+	if (!(mode_flags_ & MODE_TOPIC)) {
+		// commanding_user->WriteOutputBuff("channel is in no topic mode\n");
+		commanding_user->WriteOutputBuff(gen_no_topic(name_));
+	}
 	else {
 		commanding_user->WriteOutputBuff(gen_get_topic(name_, topic_));
 	}
