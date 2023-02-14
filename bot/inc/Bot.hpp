@@ -21,27 +21,26 @@
 
 class Bot
 {
-	struct Socket{
-		int					fd;
-		// struct sockaddr_in	address;
-	};
-
 	public:
 		Bot(int port);
 		~Bot();
 
 		void	InitBot(std::string server_password);
 
+/* =================			IO			================= */
+
 		void	Recv();
 		void	SendTime();
-		void	GetTime();
 
-		std::vector<char>	StrToOutputbuff(std::string s);
+/* =================			OutputBuffWriter			================= */
+
+		void				GetTime();
+		std::string			GetNameFromInput();
+
 
 
 	private:
-		Socket					socket_;
-		std::vector<char>		input_buff_;
-		std::vector<char>		output_buff_;
-
+		int					fd_;
+		std::vector<char>	input_buff_;
+		std::vector<char>	output_buff_;
 };

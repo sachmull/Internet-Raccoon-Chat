@@ -37,7 +37,6 @@ class Channel
 
 		bool	RegisterUser(User* user);
 		bool	DeregisterUser(User* user);
-		void	BroadcastMsg(std::vector<char> msg);
 		void	BroadcastMsg(User& user, std::string msg);
 
 		std::string	GetName();

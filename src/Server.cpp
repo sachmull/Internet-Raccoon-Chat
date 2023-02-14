@@ -7,7 +7,9 @@ Server::Server(int port, int queue_length, std::string password)
 {
 	int	error;
 
+	// set server password
 	irc_.SetPassword(password);
+
 	// create the server socket
 	socket_.fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (socket_.fd == -1)
@@ -49,15 +51,7 @@ void	Server::PollEventHandler()
 	pollfd*	poll_fds_array = &poll_fds_[0];
 	int		poll_events_ready = poll(poll_fds_array, poll_fds_.size(), 0); //handle timeout
 	if (poll_events_ready == -1)
-		; //error here or in demultiplexer?
-	// evaluate the returned events
-	// if (poll_events_ready > 0)
-	// {
-		// std::cout << "pollevents ready: " << poll_events_ready << std::endl;
-		
-		// std::cout << "poll fd size: " << poll_fds_.size() << std::endl;
-	// }
-		
+		return ;
 	for (size_t idx = 0; idx < poll_fds_.size() && poll_events_ready; ++idx) //delete idx < poll_fds_.size()?
 	{
 		try{
@@ -97,33 +91,6 @@ void	Server::ResetPollFdFlags()
 	}
 }
 
-// // should only be called by user deconstructor!!
-// void	Server::ErasePollFd(pollfd* poll_fd)
-// {
-// 	for(std::vector<pollfd>::iterator it = poll_fds_.begin(); it != poll_fds_.end(); ++it)
-// 	{
-// 		if(it->fd == poll_fd->fd)
-// 		{
-// 			poll_fds_.erase(it);
-// 			break ;
-// 		}
-// 	}
-// }
-
-// should only be called by user deconstructor!!
-void	Server::ErasePollFd(int fd)
-{
-	for(std::vector<pollfd>::iterator it = poll_fds_.begin(); it != poll_fds_.end(); ++it)
-	{
-		if(it->fd == fd)
-		{
-			close(it->fd);
-			poll_fds_.erase(it);
-			break ;
-		}
-	}
-}
-
 void	Server::Accept()
 {
 	int				conn_fd;
@@ -147,3 +114,17 @@ void Server::AddConnection(struct pollfd poll_fd, struct sockaddr addr)
 	poll_fds_.push_back(poll_fd);
 	Irc::AddUser(poll_fds_.back());
 }
+
+void	Server::ErasePollFd(int fd)
+{
+	for(std::vector<pollfd>::iterator it = poll_fds_.begin(); it != poll_fds_.end(); ++it)
+	{
+		if(it->fd == fd)
+		{
+			close(it->fd);
+			poll_fds_.erase(it);
+			break ;
+		}
+	}
+}
+

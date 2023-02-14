@@ -211,7 +211,7 @@ void	Executor::execute(Message& msg, User& user) {
 	}
 	if (msg.command == CAP)
 	{
-		user.WriteOutputBuff("CAP * LS :");
+		user.WriteOutputBuff("CAP * LS : \r\n");
 	} else if (msg.command == NICK) {
 		user.SetNickname(msg.params[0][0]);
 	} else if (msg.command == USER) {
@@ -259,6 +259,6 @@ void	Executor::execute(Message& msg, User& user) {
 	}
 	else
 	{
-		user.WriteOutputBuff("you are not authenticated\n");
+		user.WriteOutputBuff("you are not authenticated\r\n");
 	}
 }
