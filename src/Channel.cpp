@@ -1,4 +1,5 @@
 #include <Channel.hpp>
+#include <MsgGeneration.hpp>
 // #include <Server.hpp>
 
 Channel::Channel(std::string name) : name_(name), topic_(""),  mode_flags_(0), gets_deleted(false)
@@ -72,11 +73,11 @@ void	Channel::BroadcastMsg(std::vector<char> msg)
 	}
 }
 
-void	Channel::BroadcastMsg(std::string msg)
+void	Channel::BroadcastMsg(User& user, std::string msg)
 {
 	for(std::vector<User*>::iterator it = registered_users_.begin(); it != registered_users_.end(); ++it)
 	{
-		(*it)->WriteOutputBuff(msg);
+		(*it)->WriteOutputBuff(gen_privmsg(user.GetNickname(), name_, msg));
 	}
 }
 
@@ -123,7 +124,8 @@ bool	Channel::KickUser(User* kick_user, User* commanding_user)
 	if (kick_user == NULL || IsOperator(commanding_user) == false)
 		return false;
 	DeregisterUser(kick_user);
-	kick_user->WriteOutputBuff("you got kicked\n");
+	// kick_user->WriteOutputBuff("you got kicked\n");
+	kick_user->WriteOutputBuff(gen_kick(commanding_user->GetNickname(), kick_user->GetNickname(), name_, "we dont need a reason"));
 	return true;
 }
 
@@ -131,8 +133,14 @@ void	Channel::SetTopic(std::string& new_topic, User* commanding_user)
 {
 	if (!(mode_flags_ & MODE_TOPIC))
 		commanding_user->WriteOutputBuff("channel is in no topic mode\n");
-	else if (IsOperator(commanding_user) == true)
-		commanding_user->WriteOutputBuff("changed topic to:" + new_topic + "\n");
+	else if (IsOperator(commanding_user) == true) {
+		// commanding_user->WriteOutputBuff("changed topic to:" + new_topic + "\n");
+		topic_ = new_topic;
+		for(std::vector<User*>::iterator it = registered_users_.begin(); it != registered_users_.end(); ++it)
+		{
+			(*it)->WriteOutputBuff(gen_set_topic(commanding_user->GetNickname(), name_, new_topic));
+		}
+	}
 	else
 		commanding_user->WriteOutputBuff("you are not operator\n");
 }
@@ -141,8 +149,10 @@ void	Channel::GetTopic(User* commanding_user)
 {
 	if (!(mode_flags_ & MODE_TOPIC))
 		commanding_user->WriteOutputBuff("channel is in no topic mode\n");
-	else
-		commanding_user->WriteOutputBuff(topic_ + "\n");
+	else {
+		commanding_user->WriteOutputBuff(gen_get_topic(name_, topic_));
+	}
+		// commanding_user->WriteOutputBuff(topic_ + "\n");
 }
 
 

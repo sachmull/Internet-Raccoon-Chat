@@ -136,7 +136,7 @@ void Irc::DistributeMsg(std::vector<std::string> names, std::string msg, User* u
 		{
 			Channel* channel = GetChannel(*it);
 			if (channel != NULL && channel->IsUserRegistered(user))
-				channel->BroadcastMsg(msg);
+				channel->BroadcastMsg(*user, msg);
 			else if (channel == NULL) {
 				PRINTLN("no such nickname");
 				user->WriteOutputBuff(err_no_such_nick(user->GetNickname(), *it));

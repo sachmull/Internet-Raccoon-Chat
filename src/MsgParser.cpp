@@ -17,7 +17,7 @@ std::ostream&	operator<<(std::ostream& os, const Message& msg) {
 		os << std::endl;
 		os << "Command:\t" << msg.command << std::endl;
 		os << std::endl;
-		os << "Parameters\t" << std::endl;
+		os << "Parameters\t" << msg.params.size() << std::endl;
 
 		for (std::vector<std::vector<std::string> >::const_iterator it = msg.params.begin(); it != msg.params.end(); ++it) {
 			for (std::vector<std::string>::const_iterator jt = it->begin(); jt != it->end(); ++jt) {
@@ -184,6 +184,9 @@ void	MsgParser::parse_params(Message& msg) {
 	if (!buf.empty()) {
 		msg.params.back().push_back(buf);
 	}
+	if (msg.params.back().empty()) {
+		msg.params.pop_back();
+	}
 }
 
 void	MsgParser::skip_whitespace() {
@@ -210,14 +213,11 @@ void	Executor::execute(Message& msg, User& user) {
 	{
 		user.WriteOutputBuff("CAP * LS :");
 	} else if (msg.command == NICK) {
-		PRINTLN("NICK");
 		user.SetNickname(msg.params[0][0]);
 	} else if (msg.command == USER) {
-		PRINTLN("USER");
 		user.SetUsername(msg.params[0][0]);
 	} else if(user.IsAuthenticated() ==true) {
 		if (msg.command == JOIN) {
-			PRINTLN("JOIN");
 			user.ConnectToChannel(msg.params[0][0]);
 		} else if (msg.command == PRIVMSG) {
 			user.SendMessage(msg.params[0], msg.params[1][0]);
@@ -226,15 +226,31 @@ void	Executor::execute(Message& msg, User& user) {
 		} else if (msg.command == QUIT) {
 			std::cout << msg.params[0][0] << std::endl;
 		} else if (msg.command == KICK) {
-			user.KickUser(msg.params[0][0], msg.params[1][0]);
+			if (msg.params.size() < 2) {
+				user.WriteOutputBuff(err_need_more_params(user.GetNickname(), "KICK"));
+			} else {
+				user.KickUser(msg.params[0][0], msg.params[1][0]);
+			}
 		} else if (msg.command == MODE) {
-			user.SetMode(msg.params[0][0], msg.params[1][0]);
+			if (msg.params.size() == 2) {
+				user.SetMode(msg.params[0][0], msg.params[1][0]);
+			} else {
+				user.WriteOutputBuff(err_need_more_params(user.GetNickname(), "MODE"));
+			}
 		} else if (msg.command == INVITE) {
 			user.InviteUser(msg.params[1][0], msg.params[0][0]);
 		} else if (msg.command == TOPIC) {
-			TODO("TOPIC");
+			if (msg.params.size() == 1) {
+				PRINTLN("get Topic");
+				user.GetTopic(msg.params[0][0]);
+			} else if (msg.params.size() == 2) {
+				PRINTLN("change Topic");
+				user.SetTopic(msg.params[0][0], msg.params[1][0]);
+			} else {
+				user.WriteOutputBuff(err_need_more_params(user.GetNickname(), "TOPIC"));
+			}
 		} else if (msg.command == UNKNOWN) {
-			TODO("UNKNOWN");
+			ERROR("This looks like an unsupported command");
 		} else {
 			ERROR("This should be an unreachable statement\n");
 		}
