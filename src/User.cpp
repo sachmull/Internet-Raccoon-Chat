@@ -102,12 +102,15 @@ void	User::SendMessage(std::vector<std::string>& names, std::string& msg)
 
 void	User::ConnectToChannel(std::string channel_name)
 {
-	try{
-	Channel* channel = Irc::CreateChannel(channel_name);
-	if (channel == NULL)
-		return ;
-	channel->RegisterUser(this); //make it for multiple channels
-	} catch (std::exception& e) { std::cerr << "co channel: " << e.what() << '\n'; }
+	if (channel_name.front() == '#') {
+		try{
+		Channel* channel = Irc::CreateChannel(channel_name);
+		if (channel == NULL)
+			return ;
+		channel->RegisterUser(this); //make it for multiple channels
+		GetTopic(channel_name);
+		} catch (std::exception& e) { std::cerr << "co channel: " << e.what() << '\n'; }
+	}
 }
 
 void	User::DisconnectFromChannel(std::string channel_name)

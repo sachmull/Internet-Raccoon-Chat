@@ -42,8 +42,6 @@ class Channel
 		void		SetTopic(std::string& new_topic, User* commanding_user);
 		bool		InviteUser(User* new_user, User* commanding_user);
 
-/* =================			Garbage Collector			================= */
-		bool		gets_deleted;
 
 /* =================			Private Helpers			================= */
 	private:
@@ -59,6 +57,9 @@ class Channel
 		std::string			topic_;
 		size_t				mode_flags_;
 
+/* =================			Garbage Collector			================= */
+	public:
+		bool		gets_deleted;
 
 };
 
